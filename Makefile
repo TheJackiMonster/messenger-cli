@@ -1,6 +1,6 @@
 
 SOURCE_DIR  = src/
-INSTALL_DIR = /usr/local/
+INSTALL_DIR ?= /usr/local/
 
 BINARY  = messenger-cli
 SOURCES = messenger_cli.c
@@ -8,12 +8,12 @@ HEADERS =
 
 LIBRARIES = gnunetchat
 
-CC = gcc
-LD = gcc
-RM = rm
+CC ?= gcc
+LD ?= gcc
+RM ?= rm
 
-CFLAGS  = -pedantic -Wall -Wextra -march=native -ggdb3
-LDFLAGS = 
+CFLAGS  += -pedantic -Wall -Wextra -march=native -ggdb3
+LDFLAGS += 
 
 DEBUGFLAGS   = -O0 -D _DEBUG
 RELEASEFLAGS = -O2 -D NDEBUG -fwhole-program
