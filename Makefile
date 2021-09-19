@@ -6,7 +6,7 @@ BINARY  = messenger-cli
 SOURCES = messenger_cli.c
 HEADERS = 
 
-LIBRARIES = gnunetchat
+LIBRARIES = gnunetchat gnunetutil
 
 CC ?= gcc
 LD ?= gcc
