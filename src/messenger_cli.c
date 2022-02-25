@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2021 GNUnet e.V.
+   Copyright (C) 2021--2022 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -22,9 +22,13 @@
  * @file messenger_cli.c
  */
 
+#include <stdlib.h>
+#include <curses.h>
+
 #include <gnunet/platform.h>
 #include <gnunet/gnunet_chat_lib.h>
 #include <gnunet/gnunet_util_lib.h>
+
 
 static void
 run (void *cls, char* const* args,
@@ -34,12 +38,60 @@ run (void *cls, char* const* args,
   struct GNUNET_CHAT_Handle *handle = GNUNET_CHAT_start(
     cfg,
 	"appdir",
-	"username",
-	NULL, NULL,
 	NULL, NULL
   );
 
-  //
+  initscr();
+  noecho();
+
+  int bx, by, mx, my;
+  getbegyx(stdscr, by, bx);
+  getmaxyx(stdscr, my, mx);
+
+  WINDOW *win = newwin(15, 30, by + (my - by - 15) / 2, bx + (mx - bx - 30) / 2);
+  
+  char c;
+  do {
+	getbegyx(stdscr, by, bx);
+  	getmaxyx(stdscr, my, mx);
+
+	int x = bx + (mx - bx - 30) / 2;
+    int y = by + (my - by - 15) / 2;
+
+	int w = 30;
+	int h = 15;
+
+	if (mx - x < w)
+	  w = (mx - x > 0? mx - x : 0);
+
+	if (my - y < h)
+	  h = (my - y > 0? my - y : 0);
+
+	if (w * h > 0)
+	{
+	  mvwin(win, y, x);
+	  wresize(win, h, w);
+    
+	  werase(win);
+	  box(win, 0, 0);
+
+      wmove(win, 1, 1);
+      wprintw(win, "%d %d, %d %d", bx, by, mx, my);
+
+	  c = wgetch(win);
+	}
+	else
+	{
+	  c = getch();
+	}
+
+	clear();
+	refresh();
+  } while (c != 'q');
+
+  delwin(win);
+
+  endwin();
 
   GNUNET_CHAT_stop(handle);
 }

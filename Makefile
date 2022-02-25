@@ -6,17 +6,17 @@ BINARY  = messenger-cli
 SOURCES = messenger_cli.c
 HEADERS = 
 
-LIBRARIES = gnunetchat gnunetutil
+LIBRARIES = gnunetchat gnunetutil ncurses
 
-CC ?= gcc
-LD ?= gcc
-RM ?= rm
+GNU_CC ?= gcc
+GNU_LD ?= gcc
+GNU_RM ?= rm
 
-CFLAGS  += -pedantic -Wall -Wextra -march=native -ggdb3
+CFLAGS  += -pedantic -Wall -Wextra -ggdb3 -Wno-overlength-strings
 LDFLAGS += 
 
 DEBUGFLAGS   = -O0 -D _DEBUG
-RELEASEFLAGS = -O2 -D NDEBUG -fwhole-program
+RELEASEFLAGS = -O2 -D NDEBUG
 
 SOURCE_FILES  = $(addprefix $(SOURCE_DIR), $(SOURCES))
 OBJECT_FILES  = $(SOURCE_FILES:%.c=%.o)
@@ -32,10 +32,10 @@ release: CFLAGS += $(RELEASEFLAGS)
 release: $(BINARY)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@ $(LIBRARY_FLAGS)
+	$(GNU_CC) $(CFLAGS) -c $< -o $@ $(LIBRARY_FLAGS)
 
 $(BINARY): $(OBJECT_FILES)
-	$(LD) $(LDFLAGS) $^ -o $@ $(LIBRARY_FLAGS)
+	$(GNU_LD) $(LDFLAGS) $^ -o $@ $(LIBRARY_FLAGS)
 
 .PHONY: install
 
@@ -45,10 +45,10 @@ install:
 .PHONY: uninstall
 
 uninstall:
-	$(RM) -f $(addsuffix $(BINARY), $(addprefix $(INSTALL_DIR), bin/))
+	$(GNU_RM) -f $(addsuffix $(BINARY), $(addprefix $(INSTALL_DIR), bin/))
 
 .PHONY: clean
 
 clean:
-	$(RM) -f $(BINARY)
-	$(RM) -f $(OBJECT_FILES)
+	$(GNU_RM) -f $(BINARY)
+	$(GNU_RM) -f $(OBJECT_FILES)
