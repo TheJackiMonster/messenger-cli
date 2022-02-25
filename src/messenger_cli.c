@@ -49,8 +49,11 @@ run (void *cls, char* const* args,
   getmaxyx(stdscr, my, mx);
 
   WINDOW *win = newwin(15, 30, by + (my - by - 15) / 2, bx + (mx - bx - 30) / 2);
-  
-  char c;
+  keypad(win, TRUE);
+
+  int selected = 0;
+
+  int c;
   do {
 	getbegyx(stdscr, by, bx);
   	getmaxyx(stdscr, my, mx);
@@ -76,14 +79,29 @@ run (void *cls, char* const* args,
 	  box(win, 0, 0);
 
       wmove(win, 1, 1);
-      wprintw(win, "%d %d, %d %d", bx, by, mx, my);
+      wprintw(win, "%d %d, %d %d | %d %d", bx, by, mx, my, c, KEY_DOWN);
 
+	  const int attrs_select = A_BOLD;
+
+	  for (int i = 0; i < 5; i++) {
+        if (i == selected) wattron(win, attrs_select);
+		
+		wmove(win, i+2, 1);
+		wprintw(win, "Option %d", i+1);
+
+		if (i == selected) wattroff(win, attrs_select);
+	  }
+
+	  wmove(win, 7, 1);
 	  c = wgetch(win);
 	}
 	else
 	{
 	  c = getch();
 	}
+
+	if (KEY_UP == c) selected = (selected > 0? selected - 1 : 0);
+	else if (KEY_DOWN == c) selected = (selected < 4? selected + 1 : 4);
 
 	clear();
 	refresh();
