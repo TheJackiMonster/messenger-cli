@@ -22,18 +22,12 @@
  * @file messenger_cli.c
  */
 
-#include <stdlib.h>
-#include <curses.h>
+#include "application.h"
 
-#include <gnunet/platform.h>
-#include <gnunet/gnunet_chat_lib.h>
-#include <gnunet/gnunet_util_lib.h>
-
-
-static void
+/*static void
 run (void *cls, char* const* args,
      const char *cfgfile,
-	 const struct GNUNET_CONFIGURATION_Handle *cfg)
+     const struct GNUNET_CONFIGURATION_Handle *cfg)
 {
   struct GNUNET_CHAT_Handle *handle = GNUNET_CHAT_start(
     cfg,
@@ -112,26 +106,15 @@ run (void *cls, char* const* args,
   endwin();
 
   GNUNET_CHAT_stop(handle);
-}
+}*/
 
 int
-main (int argc, char* const* argv)
+main (int argc, char** argv)
 {
-  struct GNUNET_GETOPT_CommandLineOption options[] = {
-    GNUNET_GETOPT_OPTION_END
-  };
+  MESSENGER_Application app;
 
-  int result = GNUNET_PROGRAM_run(
-    argc, argv,
-	"messenger_cli",
-	gettext_noop("A CLI for the Messenger service of GNUnet."),
-	options,
-	&run,
-	NULL
-  );
+  application_init(&app, argc, argv);
+  application_run(&app);
 
-  if (result != GNUNET_OK)
-    return EXIT_FAILURE;
-  else
-    return EXIT_SUCCESS;
+  return application_status(&app);
 }

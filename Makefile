@@ -3,7 +3,9 @@ SOURCE_DIR  = src/
 INSTALL_DIR ?= /usr/local/
 
 BINARY  = messenger-cli
-SOURCES = messenger_cli.c
+SOURCES = messenger_cli.c\
+					application.c\
+					chat.c
 HEADERS = 
 
 LIBRARIES = gnunetchat gnunetutil ncurses
