@@ -28,11 +28,27 @@
 #include <stdlib.h>
 #include <curses.h>
 
-struct UI_ACCOUNTS_Handle
+struct MESSENGER_Application;
+struct GNUNET_CHAT_Account;
+
+typedef struct UI_ACCOUNTS_Handle
 {
   WINDOW *window;
+
+  int line_index;
+  int line_offset;
+  int line_selected;
+
+  struct GNUNET_CHAT_Account *selected;
 } UI_ACCOUNTS_Handle;
 
+void
+accounts_event(UI_ACCOUNTS_Handle *accounts,
+               struct MESSENGER_Application *app,
+	       int key);
 
+void
+accounts_print(UI_ACCOUNTS_Handle *accounts,
+               struct MESSENGER_Application *app);
 
 #endif /* UI_ACCOUNTS_H_ */
