@@ -25,6 +25,8 @@
 #include "accounts.h"
 #include "../application.h"
 
+#include <stdbool.h>
+
 int
 _accounts_iterate(void *cls,
                   UNUSED const struct GNUNET_CHAT_Handle *handle,
@@ -32,10 +34,14 @@ _accounts_iterate(void *cls,
 {
   UI_ACCOUNTS_Handle *accounts = cls;
 
-  if (accounts->line_index++ == accounts->line_selected)
+  const bool selected = (accounts->line_selected == accounts->line_index);
+
+  accounts->line_index++;
+
+  if (selected)
     accounts->selected = account;
 
-  return GNUNET_NO;
+  return GNUNET_YES;
 }
 
 void
@@ -64,6 +70,7 @@ accounts_event(UI_ACCOUNTS_Handle *accounts,
       accounts->line_selected++;
       break;
     }
+    case '\n':
     case KEY_ENTER:
     {
       if (accounts->selected)
@@ -72,12 +79,29 @@ accounts_event(UI_ACCOUNTS_Handle *accounts,
       break;
     }
     default:
-      if (accounts->line_selected < 0)
-	accounts->line_selected = 0;
-      else if (accounts->line_selected >= count)
-	accounts->line_selected = count - 1;
       break;
   }
+
+  if (accounts->line_selected < 0)
+    accounts->line_selected = 0;
+  else if (accounts->line_selected >= count)
+    accounts->line_selected = count - 1;
+
+  if (!(accounts->window))
+    return;
+
+  const int height = getmaxy(accounts->window) - getbegy(accounts->window);
+  const int y = accounts->line_selected - accounts->line_offset;
+
+  if (y < 0)
+    accounts->line_offset += y;
+  else if (y + 1 >= height)
+    accounts->line_offset += y + 1 - height;
+
+  if (accounts->line_offset < 0)
+    accounts->line_offset = 0;
+  else if (accounts->line_offset >= count)
+    accounts->line_offset = count - 1;
 }
 
 int
@@ -87,9 +111,12 @@ _accounts_iterate_print(void *cls,
 {
   UI_ACCOUNTS_Handle *accounts = cls;
 
+  const bool selected = (accounts->line_selected == accounts->line_index);
   const int y = accounts->line_index - accounts->line_offset;
 
-  if (accounts->line_index++ < accounts->line_offset)
+  accounts->line_index++;
+
+  if (y < 0)
     return GNUNET_YES;
 
   const int height = getmaxy(accounts->window) - getbegy(accounts->window);
@@ -99,8 +126,15 @@ _accounts_iterate_print(void *cls,
 
   const char *name = GNUNET_CHAT_account_get_name(account);
 
-  move(y, 0);
+  const int attrs_select = A_BOLD;
+
+  if (selected) wattron(accounts->window, attrs_select);
+
+  wmove(accounts->window, y, 0);
   wprintw(accounts->window, "%s", name);
+
+  if (selected) wattroff(accounts->window, attrs_select);
+
   return GNUNET_YES;
 }
 
@@ -108,6 +142,9 @@ void
 accounts_print(UI_ACCOUNTS_Handle *accounts,
                struct MESSENGER_Application *app)
 {
+  if (!(accounts->window))
+    return;
+
   accounts->line_index = 0;
 
   GNUNET_CHAT_iterate_accounts(

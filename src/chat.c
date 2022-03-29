@@ -25,6 +25,9 @@
 #include "chat.h"
 
 #include "application.h"
+#include "ui/accounts.h"
+
+UI_ACCOUNTS_Handle accounts;
 
 int lc = 0;
 
@@ -33,7 +36,7 @@ _chat_message(UNUSED void *cls,
 	      UNUSED struct GNUNET_CHAT_Context *context,
 	      UNUSED const struct GNUNET_CHAT_Message *message)
 {
-  //MESSENGER_Application *app = cls;
+  // MESSENGER_Application *app = cls;
 
   enum GNUNET_CHAT_MessageKind kind = GNUNET_CHAT_message_get_kind(
       message
@@ -46,9 +49,12 @@ _chat_message(UNUSED void *cls,
 }
 
 static void
-_chat_refresh(UNUSED MESSENGER_Application *app)
+_chat_refresh(MESSENGER_Application *app)
 {
   // TODO
+
+  accounts.window = stdscr;
+  accounts_print(&accounts, app);
 }
 
 static int
@@ -63,6 +69,8 @@ _chat_event(MESSENGER_Application *app,
 
   move(lc++, 0);
   printw("KEY %d", key);
+
+  accounts_event(&accounts, app, key);
 
 refresh:
   _chat_refresh(app);
