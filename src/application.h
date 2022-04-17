@@ -30,7 +30,9 @@
 
 #include "chat.h"
 #include "util.h"
-//#include "ui/accounts.h"
+
+#include "ui/accounts.h"
+#include "ui/messages.h"
 
 typedef struct MESSENGER_Application
 {
@@ -40,6 +42,9 @@ typedef struct MESSENGER_Application
   int status;
 
   MESSENGER_Chat chat;
+
+  UI_ACCOUNTS_Handle accounts;
+  UI_MESSAGES_Handle messages;
 } MESSENGER_Application;
 
 void

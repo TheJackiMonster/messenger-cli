@@ -25,36 +25,24 @@
 #include "chat.h"
 
 #include "application.h"
-#include "ui/accounts.h"
-
-UI_ACCOUNTS_Handle accounts;
-
-int lc = 0;
-
-static int
-_chat_message(UNUSED void *cls,
-	      UNUSED struct GNUNET_CHAT_Context *context,
-	      UNUSED const struct GNUNET_CHAT_Message *message)
-{
-  // MESSENGER_Application *app = cls;
-
-  enum GNUNET_CHAT_MessageKind kind = GNUNET_CHAT_message_get_kind(
-      message
-  );
-
-  move(lc++, 50);
-  printw("TEST %d", (int) kind);
-
-  return GNUNET_YES;
-}
 
 static void
 _chat_refresh(MESSENGER_Application *app)
 {
-  // TODO
+  const struct GNUNET_CHAT_Account *account = GNUNET_CHAT_get_connected(
+      app->chat.handle
+  );
 
-  accounts.window = stdscr;
-  accounts_print(&accounts, app);
+  app->accounts.window = NULL;
+  app->messages.window = NULL;
+
+  if (!account)
+    app->accounts.window = stdscr;
+  else if (app->chat.context)
+    app->messages.window = stdscr;
+
+  accounts_print(&(app->accounts), app);
+  messages_print(&(app->messages), app);
 }
 
 static int
@@ -64,17 +52,42 @@ _chat_event(MESSENGER_Application *app,
   if (key < 0)
     goto refresh;
 
+  const struct GNUNET_CHAT_Account *account = GNUNET_CHAT_get_connected(
+      app->chat.handle
+  );
+
   if ('q' == key)
     return 1;
 
-  move(lc++, 0);
-  printw("KEY %d", key);
+  if (!account)
+    accounts_event(&(app->accounts), app, key);
+  else if (app->chat.context)
+    messages_event(&(app->messages), app, key);
+  else
+  {
+    struct GNUNET_CHAT_Group *test = GNUNET_CHAT_group_create(
+	app->chat.handle,
+	"test"
+    );
 
-  accounts_event(&accounts, app, key);
+    app->chat.context = GNUNET_CHAT_group_get_context(test);
+  }
 
 refresh:
   _chat_refresh(app);
   return 0;
+}
+
+int lc = 0;
+
+static int
+_chat_message(void *cls,
+	      UNUSED struct GNUNET_CHAT_Context *context,
+	      UNUSED const struct GNUNET_CHAT_Message *message)
+{
+  MESSENGER_Application *app = cls;
+  _chat_event(app, KEY_RESIZE);
+  return GNUNET_YES;
 }
 
 static void
@@ -107,10 +120,11 @@ chat_start(MESSENGER_Chat *chat,
 {
   chat->handle = GNUNET_CHAT_start(
       cfg,
-      "appdir",
       &_chat_message,
       app
   );
+
+  chat->context = NULL;
 
   chat->idle = GNUNET_SCHEDULER_add_now(
       &_chat_idle,
@@ -125,18 +139,6 @@ chat_stop(MESSENGER_Chat *chat)
   {
     GNUNET_SCHEDULER_cancel(chat->idle);
     chat->idle = NULL;
-  }
-
-  if (chat->key)
-  {
-    GNUNET_SCHEDULER_cancel(chat->key);
-    chat->key = NULL;
-  }
-
-  if (chat->fdset)
-  {
-    GNUNET_NETWORK_fdset_destroy(chat->fdset);
-    chat->fdset = NULL;
   }
 
   GNUNET_CHAT_stop(chat->handle);

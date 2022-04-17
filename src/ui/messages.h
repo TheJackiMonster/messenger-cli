@@ -19,11 +19,14 @@
  */
 /*
  * @author Tobias Frisch
- * @file chat.h
+ * @file ui/messages.h
  */
 
-#ifndef CHAT_H_
-#define CHAT_H_
+#ifndef UI_MESSAGES_H_
+#define UI_MESSAGES_H_
+
+#include <stdlib.h>
+#include <curses.h>
 
 #include <gnunet/platform.h>
 #include <gnunet/gnunet_chat_lib.h>
@@ -31,20 +34,31 @@
 
 struct MESSENGER_Application;
 
-typedef struct MESSENGER_Chat
+typedef struct UI_MESSAGES_List
 {
-  struct GNUNET_CHAT_Handle *handle;
-  struct GNUNET_CHAT_Context *context;
+  const struct GNUNET_CHAT_Message *message;
 
-  struct GNUNET_SCHEDULER_Task *idle;
-} MESSENGER_Chat;
+  struct UI_MESSAGES_List *prev;
+  struct UI_MESSAGES_List *next;
+} UI_MESSAGES_List;
+
+typedef struct UI_MESSAGES_Handle
+{
+  WINDOW *window;
+
+  UI_MESSAGES_List *head;
+  UI_MESSAGES_List *tail;
+
+  int line_index;
+} UI_MESSAGES_Handle;
 
 void
-chat_start(MESSENGER_Chat *chat,
-	   struct MESSENGER_Application *app,
-	   const struct GNUNET_CONFIGURATION_Handle *cfg);
+messages_event(UI_MESSAGES_Handle *messages,
+               struct MESSENGER_Application *app,
+	       int key);
 
 void
-chat_stop(MESSENGER_Chat *chat);
+messages_print(UI_MESSAGES_Handle *messages,
+               struct MESSENGER_Application *app);
 
-#endif /* CHAT_H_ */
+#endif /* UI_MESSAGES_H_ */
