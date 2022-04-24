@@ -69,6 +69,8 @@ application_run(MESSENGER_Application *app)
       app
   );
 
+  messages_clear(&(app->messages));
+
   endwin();
 }
 

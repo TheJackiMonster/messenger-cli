@@ -19,11 +19,11 @@
  */
 /*
  * @author Tobias Frisch
- * @file ui/accounts.h
+ * @file ui/chats.h
  */
 
-#ifndef UI_ACCOUNTS_H_
-#define UI_ACCOUNTS_H_
+#ifndef UI_CHATS_H_
+#define UI_CHATS_H_
 
 #include <stdlib.h>
 #include <curses.h>
@@ -34,7 +34,7 @@
 
 struct MESSENGER_Application;
 
-typedef struct UI_ACCOUNTS_Handle
+typedef struct UI_CHATS_Handle
 {
   WINDOW *window;
 
@@ -42,16 +42,16 @@ typedef struct UI_ACCOUNTS_Handle
   int line_offset;
   int line_selected;
 
-  struct GNUNET_CHAT_Account *selected;
-} UI_ACCOUNTS_Handle;
+  struct GNUNET_CHAT_Context *selected;
+} UI_CHATS_Handle;
 
 void
-accounts_event(UI_ACCOUNTS_Handle *accounts,
-	       struct MESSENGER_Application *app,
-	       int key);
+chats_event(UI_CHATS_Handle *chats,
+	    struct MESSENGER_Application *app,
+	    int key);
 
 void
-accounts_print(UI_ACCOUNTS_Handle *accounts,
-	       struct MESSENGER_Application *app);
+chats_print(UI_CHATS_Handle *chats,
+	    struct MESSENGER_Application *app);
 
-#endif /* UI_ACCOUNTS_H_ */
+#endif /* UI_CHATS_H_ */

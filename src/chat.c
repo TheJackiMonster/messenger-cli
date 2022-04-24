@@ -34,15 +34,19 @@ _chat_refresh(MESSENGER_Application *app)
   );
 
   app->accounts.window = NULL;
+  app->chats.window = NULL;
   app->messages.window = NULL;
 
   if (!account)
     app->accounts.window = stdscr;
   else if (app->chat.context)
     app->messages.window = stdscr;
+  else
+    app->chats.window = stdscr;
 
   accounts_print(&(app->accounts), app);
-  messages_print(&(app->messages), app);
+  chats_print(&(app->chats), app);
+  messages_print(&(app->messages));
 }
 
 static int
@@ -56,36 +60,43 @@ _chat_event(MESSENGER_Application *app,
       app->chat.handle
   );
 
-  if ('q' == key)
-    return 1;
-
   if (!account)
     accounts_event(&(app->accounts), app, key);
   else if (app->chat.context)
     messages_event(&(app->messages), app, key);
   else
-  {
-    struct GNUNET_CHAT_Group *test = GNUNET_CHAT_group_create(
-	app->chat.handle,
-	"test"
-    );
+    chats_event(&(app->chats), app, key);
 
-    app->chat.context = GNUNET_CHAT_group_get_context(test);
-  }
+  if (GNUNET_YES == app->chat.quit)
+    return 1;
 
 refresh:
   _chat_refresh(app);
   return 0;
 }
 
-int lc = 0;
-
 static int
 _chat_message(void *cls,
-	      UNUSED struct GNUNET_CHAT_Context *context,
-	      UNUSED const struct GNUNET_CHAT_Message *message)
+	      struct GNUNET_CHAT_Context *context,
+	      const struct GNUNET_CHAT_Message *message)
 {
   MESSENGER_Application *app = cls;
+
+  UI_MESSAGES_Handle *messages = (UI_MESSAGES_Handle*) (
+      GNUNET_CHAT_context_get_user_pointer(context)
+  );
+
+  if (messages)
+  {
+    if (GNUNET_CHAT_KIND_DELETION == GNUNET_CHAT_message_get_kind(message))
+      messages_remove(
+	  &(app->messages),
+	  GNUNET_CHAT_message_get_target(message)
+      );
+
+    messages_add(&(app->messages), message);
+  }
+
   _chat_event(app, KEY_RESIZE);
   return GNUNET_YES;
 }
@@ -130,6 +141,8 @@ chat_start(MESSENGER_Chat *chat,
       &_chat_idle,
       app
   );
+
+  chat->quit = GNUNET_NO;
 }
 
 void
@@ -143,4 +156,6 @@ chat_stop(MESSENGER_Chat *chat)
 
   GNUNET_CHAT_stop(chat->handle);
   chat->handle = NULL;
+
+  chat->quit = GNUNET_YES;
 }

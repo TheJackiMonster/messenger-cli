@@ -37,6 +37,8 @@ typedef struct MESSENGER_Chat
   struct GNUNET_CHAT_Context *context;
 
   struct GNUNET_SCHEDULER_Task *idle;
+
+  int quit;
 } MESSENGER_Chat;
 
 void

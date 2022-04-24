@@ -23,9 +23,9 @@
  */
 
 #include "accounts.h"
-#include "../application.h"
 
-#include <stdbool.h>
+#include "../application.h"
+#include "../util.h"
 
 int
 _accounts_iterate(void *cls,
@@ -46,7 +46,7 @@ _accounts_iterate(void *cls,
 
 void
 accounts_event(UI_ACCOUNTS_Handle *accounts,
-               struct MESSENGER_Application *app,
+	       MESSENGER_Application *app,
 	       int key)
 {
   accounts->line_index = 0;
@@ -60,6 +60,12 @@ accounts_event(UI_ACCOUNTS_Handle *accounts,
 
   switch (key)
   {
+    case 27:
+    case KEY_EXIT:
+    {
+      app->chat.quit = GNUNET_YES;
+      break;
+    }
     case KEY_UP:
     {
       accounts->line_selected--;
@@ -140,12 +146,13 @@ _accounts_iterate_print(void *cls,
 
 void
 accounts_print(UI_ACCOUNTS_Handle *accounts,
-               struct MESSENGER_Application *app)
+	       MESSENGER_Application *app)
 {
   if (!(accounts->window))
     return;
 
   accounts->line_index = 0;
+  werase(accounts->window);
 
   GNUNET_CHAT_iterate_accounts(
       app->chat.handle,

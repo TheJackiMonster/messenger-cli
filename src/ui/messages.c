@@ -25,56 +25,231 @@
 #include "messages.h"
 
 #include "../application.h"
+#include "../util.h"
+
+void
+_messages_iterate(UI_MESSAGES_Handle *messages,
+		  const struct GNUNET_CHAT_Message *message)
+{
+  const bool selected = (messages->line_selected == messages->line_index);
+
+  messages->line_index++;
+
+  if (selected)
+    messages->selected = message;
+}
 
 void
 messages_event(UI_MESSAGES_Handle *messages,
-               struct MESSENGER_Application *app,
+	       MESSENGER_Application *app,
 	       int key)
 {
-  // TODO
+  messages->line_index = 0;
+  messages->selected = NULL;
+
+  int count = 0;
+
+  UI_MESSAGES_List *element = messages->head;
+  while (element)
+  {
+    _messages_iterate(messages, element->message);
+    count++;
+
+    element = element->next;
+  }
+
+  switch (key)
+  {
+    case 27:
+    case KEY_EXIT:
+    {
+      app->chat.context = NULL;
+      break;
+    }
+    case KEY_UP:
+    {
+      messages->line_selected--;
+      break;
+    }
+    case KEY_DOWN:
+    {
+      messages->line_selected++;
+      break;
+    }
+    case '\n':
+    case KEY_ENTER:
+    {
+      if (messages->selected)
+	GNUNET_CHAT_message_delete(
+	    messages->selected,
+	    GNUNET_TIME_relative_get_zero_()
+	);
+
+      break;
+    }
+    default:
+      break;
+  }
+
+  if (messages->line_selected < 0)
+    messages->line_selected = 0;
+  else if (messages->line_selected >= count)
+    messages->line_selected = count - 1;
+
+  if (!(messages->window))
+    return;
+
+  const int height = getmaxy(messages->window) - getbegy(messages->window);
+  const int y = messages->line_selected - messages->line_offset;
+
+  if (y < 0)
+    messages->line_offset += y;
+  else if (y + 1 >= height)
+    messages->line_offset += y + 1 - height;
+
+  if (messages->line_offset < 0)
+    messages->line_offset = 0;
+  else if (messages->line_offset >= count)
+    messages->line_offset = count - 1;
 }
 
-int
-_messages_iterate_print(void *cls,
-			struct GNUNET_CHAT_Context *context,
+void
+_messages_iterate_print(UI_MESSAGES_Handle *messages,
 			const struct GNUNET_CHAT_Message *message)
 {
-  UI_MESSAGES_Handle *messages = cls;
+  const bool selected = (messages->line_selected == messages->line_index);
+  const int y = messages->line_index - messages->line_offset;
 
-  const int y = messages->line_index++;
+  messages->line_index++;
+
+  if (y < 0)
+    return;
+
+  const int height = getmaxy(messages->window) - getbegy(messages->window);
+
+  if (y >= height)
+    return;
 
   enum GNUNET_CHAT_MessageKind kind = GNUNET_CHAT_message_get_kind(message);
+  struct GNUNET_CHAT_Contact *sender = GNUNET_CHAT_message_get_sender(message);
+
+  const char *name = sender? GNUNET_CHAT_contact_get_name(sender) : NULL;
   const char *text = GNUNET_CHAT_message_get_text(message);
 
   struct GNUNET_TIME_Absolute timestamp = GNUNET_CHAT_message_get_timestamp(
       message
   );
 
+  const int attrs_select = A_BOLD;
+
+  if (selected) wattron(messages->window, attrs_select);
+
   wmove(messages->window, y, 0);
   wprintw(
       messages->window,
-      "%s | [%d]: %s",
+      "%s | [%d] %s: %s",
       GNUNET_TIME_absolute2s(timestamp),
       (int) kind,
+      name,
       text
   );
 
-  return GNUNET_YES;
+  if (selected) wattroff(messages->window, attrs_select);
 }
 
 void
-messages_print(UI_MESSAGES_Handle *messages,
-               struct MESSENGER_Application *app)
+messages_print(UI_MESSAGES_Handle *messages)
 {
   if (!(messages->window))
     return;
 
-  struct GNUNET_CHAT_Context *context = app->chat.context;
-
   messages->line_index = 0;
-  GNUNET_CHAT_context_iterate_messages(
-      context,
-      _messages_iterate_print,
-      messages
+  werase(messages->window);
+
+  UI_MESSAGES_List *element = messages->head;
+  while (element)
+  {
+    _messages_iterate_print(messages, element->message);
+    element = element->next;
+  }
+}
+
+void
+messages_clear(UI_MESSAGES_Handle *messages)
+{
+  UI_MESSAGES_List *element;
+  while (messages->head)
+  {
+    element = messages->head;
+
+    GNUNET_CONTAINER_DLL_remove(
+	messages->head,
+	messages->tail,
+	element
+    );
+
+    GNUNET_free(element);
+  }
+}
+
+static int
+_message_compare_timestamps(UNUSED void *cls,
+			    UI_MESSAGES_List *list0,
+			    UI_MESSAGES_List *list1)
+{
+  struct GNUNET_TIME_Absolute time0, time1;
+
+  if ((!list0) || (!list1))
+    return 0;
+
+  time0 = GNUNET_CHAT_message_get_timestamp(list0->message);
+  time1 = GNUNET_CHAT_message_get_timestamp(list1->message);
+
+  if (GNUNET_TIME_absolute_cmp(time0, >, time1))
+    return -1;
+  else if (GNUNET_TIME_absolute_cmp(time0, <, time1))
+    return +1;
+  else
+    return 0;
+}
+
+void
+messages_add(UI_MESSAGES_Handle *messages,
+	     const struct GNUNET_CHAT_Message *message)
+{
+  if (GNUNET_CHAT_KIND_DELETION == GNUNET_CHAT_message_get_kind(message))
+    return;
+
+  UI_MESSAGES_List *element = GNUNET_new(UI_MESSAGES_List);
+  element->message = message;
+
+  GNUNET_CONTAINER_DLL_insert_sorted(
+    UI_MESSAGES_List,
+    _message_compare_timestamps,
+    NULL,
+    messages->head,
+    messages->tail,
+    element
   );
+}
+
+void
+messages_remove(UI_MESSAGES_Handle *messages,
+	        const struct GNUNET_CHAT_Message *message)
+{
+  UI_MESSAGES_List *element = messages->head;
+  while (element)
+  {
+    if (element->message == message)
+      break;
+
+    element = element->next;
+  }
+
+  if (element)
+    GNUNET_CONTAINER_DLL_remove(
+	messages->head,
+	messages->tail,
+	element
+    );
 }

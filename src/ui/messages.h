@@ -50,15 +50,29 @@ typedef struct UI_MESSAGES_Handle
   UI_MESSAGES_List *tail;
 
   int line_index;
+  int line_offset;
+  int line_selected;
+
+  const struct GNUNET_CHAT_Message *selected;
 } UI_MESSAGES_Handle;
 
 void
 messages_event(UI_MESSAGES_Handle *messages,
-               struct MESSENGER_Application *app,
+	       struct MESSENGER_Application *app,
 	       int key);
 
 void
-messages_print(UI_MESSAGES_Handle *messages,
-               struct MESSENGER_Application *app);
+messages_print(UI_MESSAGES_Handle *messages);
+
+void
+messages_clear(UI_MESSAGES_Handle *messages);
+
+void
+messages_add(UI_MESSAGES_Handle *messages,
+	     const struct GNUNET_CHAT_Message *message);
+
+void
+messages_remove(UI_MESSAGES_Handle *messages,
+	        const struct GNUNET_CHAT_Message *message);
 
 #endif /* UI_MESSAGES_H_ */

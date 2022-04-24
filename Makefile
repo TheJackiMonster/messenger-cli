@@ -7,10 +7,12 @@ SOURCES = messenger_cli.c\
           application.c\
           chat.c\
           ui/accounts.c\
+          ui/chats.c\
           ui/messages.c
 HEADERS = application.h\
           chat.h\
           ui/accounts.h\
+          ui/chats.h\
           ui/messages.h
 
 LIBRARIES = gnunetchat gnunetutil ncurses

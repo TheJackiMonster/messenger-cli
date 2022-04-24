@@ -25,6 +25,8 @@
 #ifndef UTIL_H_
 #define UTIL_H_
 
+#include <stdbool.h>
+
 #define UNUSED __attribute__((unused))
 
 #endif /* UTIL_H_ */
