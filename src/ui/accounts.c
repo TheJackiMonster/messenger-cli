@@ -49,6 +49,12 @@ accounts_event(UI_ACCOUNTS_Handle *accounts,
 	       MESSENGER_Application *app,
 	       int key)
 {
+  if (accounts->create.window)
+  {
+    account_create_event(&(accounts->create), app, key);
+    return;
+  }
+
   accounts->line_index = 0;
   accounts->selected = NULL;
 
@@ -56,7 +62,7 @@ accounts_event(UI_ACCOUNTS_Handle *accounts,
     app->chat.handle,
     &_accounts_iterate,
     accounts
-  );
+  ) + 1;
 
   switch (key)
   {
@@ -81,7 +87,8 @@ accounts_event(UI_ACCOUNTS_Handle *accounts,
     {
       if (accounts->selected)
 	GNUNET_CHAT_connect(app->chat.handle, accounts->selected);
-
+      else
+	accounts->create.window = accounts->window;
       break;
     }
     default:
@@ -110,13 +117,11 @@ accounts_event(UI_ACCOUNTS_Handle *accounts,
     accounts->line_offset = count - 1;
 }
 
-int
-_accounts_iterate_print(void *cls,
-                        UNUSED const struct GNUNET_CHAT_Handle *handle,
-                        struct GNUNET_CHAT_Account *account)
+static int
+_accounts_print_entry(UI_ACCOUNTS_Handle *accounts,
+		      char type,
+		      const char *text)
 {
-  UI_ACCOUNTS_Handle *accounts = cls;
-
   const bool selected = (accounts->line_selected == accounts->line_index);
   const int y = accounts->line_index - accounts->line_offset;
 
@@ -130,24 +135,40 @@ _accounts_iterate_print(void *cls,
   if (y >= height)
     return GNUNET_NO;
 
-  const char *name = GNUNET_CHAT_account_get_name(account);
-
   const int attrs_select = A_BOLD;
 
   if (selected) wattron(accounts->window, attrs_select);
 
   wmove(accounts->window, y, 0);
-  wprintw(accounts->window, "%s", name);
+  wprintw(accounts->window, "[%c] %s", selected? type : ' ', text);
 
   if (selected) wattroff(accounts->window, attrs_select);
 
   return GNUNET_YES;
 }
 
+int
+_accounts_iterate_print(void *cls,
+                        UNUSED const struct GNUNET_CHAT_Handle *handle,
+                        struct GNUNET_CHAT_Account *account)
+{
+  UI_ACCOUNTS_Handle *accounts = cls;
+
+  const char *name = GNUNET_CHAT_account_get_name(account);
+
+  return _accounts_print_entry(accounts, 'x', name);
+}
+
 void
 accounts_print(UI_ACCOUNTS_Handle *accounts,
 	       MESSENGER_Application *app)
 {
+  if (accounts->create.window)
+  {
+    account_create_print(&(accounts->create), app);
+    return;
+  }
+
   if (!(accounts->window))
     return;
 
@@ -159,4 +180,6 @@ accounts_print(UI_ACCOUNTS_Handle *accounts,
       &_accounts_iterate_print,
       accounts
   );
+
+  _accounts_print_entry(accounts, '+', "Add account");
 }

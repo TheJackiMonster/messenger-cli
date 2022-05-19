@@ -6,11 +6,13 @@ BINARY  = messenger-cli
 SOURCES = messenger_cli.c\
           application.c\
           chat.c\
+          ui/account_create.c\
           ui/accounts.c\
           ui/chats.c\
           ui/messages.c
 HEADERS = application.h\
           chat.h\
+          ui/account_create.h\
           ui/accounts.h\
           ui/chats.h\
           ui/messages.h
