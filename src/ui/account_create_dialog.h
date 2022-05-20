@@ -19,43 +19,33 @@
  */
 /*
  * @author Tobias Frisch
- * @file ui/accounts.h
+ * @file ui/account_create_dialog.h
  */
 
-#ifndef UI_ACCOUNTS_H_
-#define UI_ACCOUNTS_H_
+#ifndef UI_ACCOUNT_CREATE_DIALOG_H_
+#define UI_ACCOUNT_CREATE_DIALOG_H_
 
 #include <stdlib.h>
 #include <curses.h>
 
-#include <gnunet/platform.h>
-#include <gnunet/gnunet_chat_lib.h>
-#include <gnunet/gnunet_util_lib.h>
-
-#include "account_create_dialog.h"
-
 struct MESSENGER_Application;
 
-typedef struct UI_ACCOUNTS_Handle
+typedef struct UI_ACCOUNT_CREATE_DIALOG_Handle
 {
   WINDOW *window;
 
-  int line_index;
-  int line_offset;
-  int line_selected;
-
-  struct GNUNET_CHAT_Account *selected;
-
-  UI_ACCOUNT_CREATE_DIALOG_Handle create_dialog;
-} UI_ACCOUNTS_Handle;
+  char name [256];
+  int name_len;
+  int name_pos;
+} UI_ACCOUNT_CREATE_DIALOG_Handle;
 
 void
-accounts_event(UI_ACCOUNTS_Handle *accounts,
-	       struct MESSENGER_Application *app,
-	       int key);
+account_create_dialog_event(UI_ACCOUNT_CREATE_DIALOG_Handle *create_dialog,
+			    struct MESSENGER_Application *app,
+			    int key);
 
 void
-accounts_print(UI_ACCOUNTS_Handle *accounts,
-	       struct MESSENGER_Application *app);
+account_create_dialog_print(UI_ACCOUNT_CREATE_DIALOG_Handle *create_dialog,
+			    struct MESSENGER_Application *app);
 
-#endif /* UI_ACCOUNTS_H_ */
+#endif /* UI_ACCOUNT_CREATE_DIALOG_H_ */

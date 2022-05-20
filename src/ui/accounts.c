@@ -49,9 +49,9 @@ accounts_event(UI_ACCOUNTS_Handle *accounts,
 	       MESSENGER_Application *app,
 	       int key)
 {
-  if (accounts->create.window)
+  if (accounts->create_dialog.window)
   {
-    account_create_event(&(accounts->create), app, key);
+    account_create_dialog_event(&(accounts->create_dialog), app, key);
     return;
   }
 
@@ -88,7 +88,7 @@ accounts_event(UI_ACCOUNTS_Handle *accounts,
       if (accounts->selected)
 	GNUNET_CHAT_connect(app->chat.handle, accounts->selected);
       else
-	accounts->create.window = accounts->window;
+	accounts->create_dialog.window = accounts->window;
       break;
     }
     default:
@@ -163,9 +163,9 @@ void
 accounts_print(UI_ACCOUNTS_Handle *accounts,
 	       MESSENGER_Application *app)
 {
-  if (accounts->create.window)
+  if (accounts->create_dialog.window)
   {
-    account_create_print(&(accounts->create), app);
+    account_create_dialog_print(&(accounts->create_dialog), app);
     return;
   }
 

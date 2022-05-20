@@ -19,33 +19,33 @@
  */
 /*
  * @author Tobias Frisch
- * @file ui/account_create.h
+ * @file ui/chat_open_dialog.h
  */
 
-#ifndef UI_ACCOUNT_CREATE_H_
-#define UI_ACCOUNT_CREATE_H_
+#ifndef UI_CHAT_OPEN_DIALOG_H_
+#define UI_CHAT_OPEN_DIALOG_H_
 
 #include <stdlib.h>
 #include <curses.h>
 
 struct MESSENGER_Application;
 
-typedef struct UI_ACCOUNT_CREATE_Handle
+typedef struct UI_CHAT_OPEN_DIALOG_Handle
 {
   WINDOW *window;
 
-  char name [256];
-  int name_len;
-  int name_pos;
-} UI_ACCOUNT_CREATE_Handle;
+  char topic [256];
+  int topic_len;
+  int topic_pos;
+} UI_CHAT_OPEN_DIALOG_Handle;
 
 void
-account_create_event(UI_ACCOUNT_CREATE_Handle *create,
-		     struct MESSENGER_Application *app,
-		     int key);
+chat_open_dialog_event(UI_CHAT_OPEN_DIALOG_Handle *open_dialog,
+		       struct MESSENGER_Application *app,
+		       int key);
 
 void
-account_create_print(UI_ACCOUNT_CREATE_Handle *create,
-		     struct MESSENGER_Application *app);
+chat_open_dialog_print(UI_CHAT_OPEN_DIALOG_Handle *open_dialog,
+		       struct MESSENGER_Application *app);
 
-#endif /* UI_ACCOUNT_CREATE_H_ */
+#endif /* UI_CHAT_OPEN_DIALOG_H_ */

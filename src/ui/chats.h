@@ -32,6 +32,8 @@
 #include <gnunet/gnunet_chat_lib.h>
 #include <gnunet/gnunet_util_lib.h>
 
+#include "chat_open_dialog.h"
+
 struct MESSENGER_Application;
 
 typedef struct UI_CHATS_Handle
@@ -43,6 +45,8 @@ typedef struct UI_CHATS_Handle
   int line_selected;
 
   struct GNUNET_CHAT_Context *selected;
+
+  UI_CHAT_OPEN_DIALOG_Handle open_dialog;
 } UI_CHATS_Handle;
 
 void

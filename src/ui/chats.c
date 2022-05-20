@@ -61,6 +61,12 @@ chats_event(UI_CHATS_Handle *chats,
 	    MESSENGER_Application *app,
 	    int key)
 {
+  if (chats->open_dialog.window)
+  {
+    chat_open_dialog_event(&(chats->open_dialog), app, key);
+    return;
+  }
+
   chats->line_index = 0;
   chats->selected = NULL;
 
@@ -68,7 +74,7 @@ chats_event(UI_CHATS_Handle *chats,
       app->chat.handle,
       &_chats_iterate,
       chats
-  );
+  ) + 1;
 
   switch (key)
   {
@@ -108,7 +114,8 @@ chats_event(UI_CHATS_Handle *chats,
 
 	app->chat.context = chats->selected;
       }
-
+      else
+	chats->open_dialog.window = chats->window;
       break;
     }
     default:
@@ -137,13 +144,12 @@ chats_event(UI_CHATS_Handle *chats,
     chats->line_offset = count - 1;
 }
 
-int
-_chats_iterate_print(void *cls,
-		     UNUSED struct GNUNET_CHAT_Handle *handle,
-		     struct GNUNET_CHAT_Group *group)
+static int
+_chats_print_entry(UI_CHATS_Handle *chats,
+		   char type,
+		   char chat_type,
+		   const char *text)
 {
-  UI_CHATS_Handle *chats = cls;
-
   const bool selected = (chats->line_selected == chats->line_index);
   const int y = chats->line_index - chats->line_offset;
 
@@ -157,24 +163,44 @@ _chats_iterate_print(void *cls,
   if (y >= height)
     return GNUNET_NO;
 
-  const char *name = GNUNET_CHAT_group_get_name(group);
-
   const int attrs_select = A_BOLD;
 
   if (selected) wattron(chats->window, attrs_select);
 
   wmove(chats->window, y, 0);
-  wprintw(chats->window, "%s", name);
+
+  if (chat_type)
+    wprintw(chats->window, "[%c][%c] %s", type, chat_type, text);
+  else
+    wprintw(chats->window, "[%c] %s", type, text);
 
   if (selected) wattroff(chats->window, attrs_select);
 
   return GNUNET_YES;
 }
 
+int
+_chats_iterate_print(void *cls,
+		     UNUSED struct GNUNET_CHAT_Handle *handle,
+		     struct GNUNET_CHAT_Group *group)
+{
+  UI_CHATS_Handle *chats = cls;
+
+  const char *name = GNUNET_CHAT_group_get_name(group);
+
+  return _chats_print_entry(chats, 'x', 'G', name);
+}
+
 void
 chats_print(UI_CHATS_Handle *chats,
 	    MESSENGER_Application *app)
 {
+  if (chats->open_dialog.window)
+  {
+    chat_open_dialog_print(&(chats->open_dialog), app);
+    return;
+  }
+
   if (!(chats->window))
     return;
 
@@ -186,4 +212,6 @@ chats_print(UI_CHATS_Handle *chats,
       &_chats_iterate_print,
       chats
   );
+
+  _chats_print_entry(chats, '+', '\0', "Add chat");
 }
