@@ -83,7 +83,7 @@ account_create_dialog_event(UI_ACCOUNT_CREATE_DIALOG_Handle *create_dialog,
     }
     default:
     {
-      if (!isalnum(key))
+      if (!isprint(key))
 	break;
 
       for (int i = create_dialog->name_len - 1; i >= create_dialog->name_pos; i--)

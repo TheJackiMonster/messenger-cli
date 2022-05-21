@@ -83,7 +83,7 @@ chat_open_dialog_event(UI_CHAT_OPEN_DIALOG_Handle *open_dialog,
     }
     default:
     {
-      if (!isalnum(key))
+      if (!isprint(key))
       break;
 
       for (int i = open_dialog->topic_len - 1; i >= open_dialog->topic_pos; i--)

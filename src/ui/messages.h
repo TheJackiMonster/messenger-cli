@@ -42,6 +42,8 @@ typedef struct UI_MESSAGES_List
   struct UI_MESSAGES_List *next;
 } UI_MESSAGES_List;
 
+#define TEXT_LEN_MAX 1024
+
 typedef struct UI_MESSAGES_Handle
 {
   WINDOW *window;
@@ -54,6 +56,10 @@ typedef struct UI_MESSAGES_Handle
   int line_selected;
 
   const struct GNUNET_CHAT_Message *selected;
+
+  char text [1024];
+  int text_len;
+  int text_pos;
 } UI_MESSAGES_Handle;
 
 void

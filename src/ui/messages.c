@@ -47,7 +47,7 @@ messages_event(UI_MESSAGES_Handle *messages,
   messages->line_index = 0;
   messages->selected = NULL;
 
-  int count = 0;
+  int count = 1;
 
   UI_MESSAGES_List *element = messages->head;
   while (element)
@@ -66,6 +66,16 @@ messages_event(UI_MESSAGES_Handle *messages,
       app->chat.context = NULL;
       break;
     }
+    case KEY_LEFT:
+    {
+      messages->text_pos--;
+      break;
+    }
+    case KEY_RIGHT:
+    {
+      messages->text_pos++;
+      break;
+    }
     case KEY_UP:
     {
       messages->line_selected--;
@@ -79,17 +89,61 @@ messages_event(UI_MESSAGES_Handle *messages,
     case '\n':
     case KEY_ENTER:
     {
+      if ((!(messages->selected)) && (messages->text_len > 0))
+      {
+	GNUNET_CHAT_context_send_text(app->chat.context, messages->text);
+	messages->text_len = 0;
+      }
+      break;
+    }
+    case KEY_BACKSPACE:
+    {
       if (messages->selected)
+      {
 	GNUNET_CHAT_message_delete(
 	    messages->selected,
 	    GNUNET_TIME_relative_get_zero_()
 	);
+	break;
+      }
+
+      if ((messages->text_pos < messages->text_len) &&
+	  (messages->text_pos > 0))
+	for (int i = messages->text_pos; i < messages->text_len; i++)
+	  messages->text[i - 1] = messages->text[i];
+
+      if ((messages->text_pos > 0) && (messages->text_len > 0))
+      {
+	messages->text_pos--;
+	messages->text_len--;
+      }
 
       break;
     }
     default:
+    {
+      if ((messages->selected) || (!isprint(key)))
+	break;
+
+      for (int i = messages->text_len - 1; i >= messages->text_pos; i--)
+	messages->text[i + 1] = messages->text[i];
+
+      messages->text[messages->text_pos++] = (char) key;
+      messages->text_len++;
       break;
+    }
   }
+
+  if (messages->text_len >= TEXT_LEN_MAX)
+    messages->text_len = TEXT_LEN_MAX - 1;
+
+  messages->text[messages->text_len] = '\0';
+
+  if (messages->text_pos < 0)
+    messages->text_pos = 0;
+
+  if (messages->text_pos > messages->text_len)
+    messages->text_pos = messages->text_len;
 
   if (messages->line_selected < 0)
     messages->line_selected = 0;
@@ -125,7 +179,7 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
   if (y < 0)
     return;
 
-  const int height = getmaxy(messages->window) - getbegy(messages->window);
+  const int height = getmaxy(messages->window) - getbegy(messages->window) - 2;
 
   if (y >= height)
     return;
@@ -166,12 +220,33 @@ messages_print(UI_MESSAGES_Handle *messages)
   messages->line_index = 0;
   werase(messages->window);
 
+  int count = 0;
+
   UI_MESSAGES_List *element = messages->head;
   while (element)
   {
     _messages_iterate_print(messages, element->message);
     element = element->next;
+
+    count++;
   }
+
+  const bool selected = (count == messages->line_selected);
+
+  const int width = getmaxx(messages->window) - getbegx(messages->window);
+  const int height = getmaxy(messages->window) - getbegy(messages->window);
+
+  wmove(messages->window, height - 2, 0);
+  whline(messages->window, '-', width);
+
+  const int attrs_select = A_BOLD;
+
+  if (selected) wattron(messages->window, attrs_select);
+
+  wmove(messages->window, height - 1, 0);
+  wprintw(messages->window, "%s", messages->text);
+
+  if (selected) wattroff(messages->window, attrs_select);
 }
 
 void
