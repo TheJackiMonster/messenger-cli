@@ -158,8 +158,8 @@ messages_event(UI_MESSAGES_Handle *messages,
 
   if (y < 0)
     messages->line_offset += y;
-  else if (y + 1 >= height)
-    messages->line_offset += y + 1 - height;
+  else if (y + 3 >= height)
+    messages->line_offset += y + 3 - height;
 
   if (messages->line_offset < 0)
     messages->line_offset = 0;
@@ -247,6 +247,8 @@ messages_print(UI_MESSAGES_Handle *messages)
   wprintw(messages->window, "%s", messages->text);
 
   if (selected) wattroff(messages->window, attrs_select);
+
+  wmove(messages->window, height - 1, messages->text_pos);
 }
 
 void
