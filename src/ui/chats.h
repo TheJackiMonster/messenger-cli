@@ -44,7 +44,7 @@ typedef struct UI_CHATS_Handle
   int line_offset;
   int line_selected;
 
-  struct GNUNET_CHAT_Context *selected;
+  struct GNUNET_CHAT_Group *selected;
 
   UI_CHAT_OPEN_DIALOG_Handle open_dialog;
 } UI_CHATS_Handle;

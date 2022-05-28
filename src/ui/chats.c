@@ -39,19 +39,19 @@ _chats_iterate(void *cls,
   chats->line_index++;
 
   if (selected)
-    chats->selected = GNUNET_CHAT_group_get_context(group);
+    chats->selected = group;
 
   return GNUNET_YES;
 }
 
 static int
 _chats_iterate_messages(void *cls,
-			UNUSED struct GNUNET_CHAT_Context *context,
+			struct GNUNET_CHAT_Context *context,
 			const struct GNUNET_CHAT_Message *message)
 {
   UI_MESSAGES_Handle *messages = cls;
 
-  messages_add(messages, message);
+  messages_add(messages, context, message);
 
   return GNUNET_YES;
 }
@@ -99,20 +99,22 @@ chats_event(UI_CHATS_Handle *chats,
     {
       if (chats->selected)
       {
+	struct GNUNET_CHAT_Context *context = GNUNET_CHAT_group_get_context(chats->selected);
+
 	messages_clear(&(app->messages));
 
 	GNUNET_CHAT_context_iterate_messages(
-	    chats->selected,
+	    context,
 	    &_chats_iterate_messages,
 	    &(app->messages)
 	);
 
 	GNUNET_CHAT_context_set_user_pointer(
-	    chats->selected,
+	    context,
 	    &(app->messages)
 	);
 
-	app->chat.context = chats->selected;
+	app->chat.context = context;
       }
       else
 	chats->open_dialog.window = chats->window;

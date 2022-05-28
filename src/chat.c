@@ -91,10 +91,11 @@ _chat_message(void *cls,
     if (GNUNET_CHAT_KIND_DELETION == GNUNET_CHAT_message_get_kind(message))
       messages_remove(
 	  &(app->messages),
+	  context,
 	  GNUNET_CHAT_message_get_target(message)
       );
 
-    messages_add(&(app->messages), message);
+    messages_add(&(app->messages), context, message);
   }
 
   _chat_event(app, KEY_RESIZE);

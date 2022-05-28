@@ -75,10 +75,12 @@ messages_clear(UI_MESSAGES_Handle *messages);
 
 void
 messages_add(UI_MESSAGES_Handle *messages,
+	     struct GNUNET_CHAT_Context *context,
 	     const struct GNUNET_CHAT_Message *message);
 
 void
 messages_remove(UI_MESSAGES_Handle *messages,
+		struct GNUNET_CHAT_Context *context,
 	        const struct GNUNET_CHAT_Message *message);
 
 #endif /* UI_MESSAGES_H_ */

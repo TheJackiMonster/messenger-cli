@@ -156,10 +156,12 @@ messages_event(UI_MESSAGES_Handle *messages,
   const int height = getmaxy(messages->window) - getbegy(messages->window);
   const int y = messages->line_selected - messages->line_offset;
 
+  const int line_height = height - 2;
+
   if (y < 0)
     messages->line_offset += y;
-  else if (y + 3 >= height)
-    messages->line_offset += y + 3 - height;
+  else if (y + 1 >= line_height)
+    messages->line_offset += y + 1 - line_height;
 
   if (messages->line_offset < 0)
     messages->line_offset = 0;
@@ -181,9 +183,10 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
   if (y < 0)
     return;
 
-  const int height = getmaxy(messages->window) - getbegy(messages->window) - 2;
+  const int height = getmaxy(messages->window) - getbegy(messages->window);
+  const int line_height = height - 2;
 
-  if (y >= height)
+  if (y >= line_height)
     return;
 
   struct GNUNET_CHAT_Contact *sender = GNUNET_CHAT_message_get_sender(message);
@@ -276,8 +279,9 @@ messages_print(UI_MESSAGES_Handle *messages)
 
   const int width = getmaxx(messages->window) - getbegx(messages->window);
   const int height = getmaxy(messages->window) - getbegy(messages->window);
+  const int line_height = height - 2;
 
-  wmove(messages->window, height - 2, 0);
+  wmove(messages->window, line_height, 0);
   whline(messages->window, '-', width);
 
   const int attrs_select = A_BOLD;
@@ -333,6 +337,7 @@ _message_compare_timestamps(UNUSED void *cls,
 
 void
 messages_add(UI_MESSAGES_Handle *messages,
+	     struct GNUNET_CHAT_Context *context,
 	     const struct GNUNET_CHAT_Message *message)
 {
   enum GNUNET_CHAT_MessageKind kind = GNUNET_CHAT_message_get_kind(message);
@@ -346,7 +351,28 @@ messages_add(UI_MESSAGES_Handle *messages,
       break;
   }
 
-  UI_MESSAGES_List *element = GNUNET_new(UI_MESSAGES_List);
+  struct GNUNET_CHAT_Contact *sender = GNUNET_CHAT_message_get_sender(message);
+  struct GNUNET_CHAT_Group *group = GNUNET_CHAT_context_get_group(context);
+
+  if ((GNUNET_CHAT_KIND_JOIN == kind) &&
+      (GNUNET_CHAT_member_get_user_pointer(group, sender)))
+  {
+    return;
+  }
+
+  const int height = getmaxy(messages->window) - getbegy(messages->window);
+  const int line_height = height - 2;
+
+  int count = 0;
+
+  UI_MESSAGES_List *element = messages->head;
+  while (element)
+  {
+    count++;
+    element = element->next;
+  }
+
+  element = GNUNET_new(UI_MESSAGES_List);
   element->message = message;
 
   GNUNET_CONTAINER_DLL_insert_sorted(
@@ -357,10 +383,20 @@ messages_add(UI_MESSAGES_Handle *messages,
     messages->tail,
     element
   );
+
+  if (GNUNET_CHAT_KIND_JOIN == kind)
+    GNUNET_CHAT_member_set_user_pointer(group, sender, element);
+
+  if (messages->line_selected >= count)
+    messages->line_selected = count + 1;
+
+  if ((line_height > 0) && (messages->line_offset + line_height >= count))
+    messages->line_offset = count + 1 - line_height;
 }
 
 void
 messages_remove(UI_MESSAGES_Handle *messages,
+		UNUSED struct GNUNET_CHAT_Context *context,
 	        const struct GNUNET_CHAT_Message *message)
 {
   UI_MESSAGES_List *element = messages->head;
