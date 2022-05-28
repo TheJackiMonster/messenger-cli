@@ -27,6 +27,21 @@
 #include "../application.h"
 #include "../util.h"
 
+bool
+_messages_filter_drop(const struct GNUNET_CHAT_Message *message)
+{
+  enum GNUNET_CHAT_MessageKind kind = GNUNET_CHAT_message_get_kind(message);
+
+  switch (kind) {
+    case GNUNET_CHAT_KIND_CONTACT:
+    case GNUNET_CHAT_KIND_WHISPER:
+    case GNUNET_CHAT_KIND_DELETION:
+      return TRUE;
+    default:
+      return FALSE;
+  }
+}
+
 void
 _messages_iterate(UI_MESSAGES_Handle *messages,
 		  const struct GNUNET_CHAT_Message *message)
@@ -52,9 +67,13 @@ messages_event(UI_MESSAGES_Handle *messages,
   UI_MESSAGES_List *element = messages->head;
   while (element)
   {
+    if (_messages_filter_drop(element->message))
+      goto skip_message;
+
     _messages_iterate(messages, element->message);
     count++;
 
+  skip_message:
     element = element->next;
   }
 
@@ -171,6 +190,8 @@ void
 _messages_iterate_print(UI_MESSAGES_Handle *messages,
 			const struct GNUNET_CHAT_Message *message)
 {
+  enum GNUNET_CHAT_MessageKind kind = GNUNET_CHAT_message_get_kind(message);
+
   const bool selected = (messages->line_selected == messages->line_index);
   const int y = messages->line_index - messages->line_offset;
 
@@ -184,7 +205,6 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
   if (y >= height)
     return;
 
-  enum GNUNET_CHAT_MessageKind kind = GNUNET_CHAT_message_get_kind(message);
   struct GNUNET_CHAT_Contact *sender = GNUNET_CHAT_message_get_sender(message);
 
   const char *name = sender? GNUNET_CHAT_contact_get_name(sender) : NULL;
@@ -199,14 +219,54 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
   if (selected) wattron(messages->window, attrs_select);
 
   wmove(messages->window, y, 0);
-  wprintw(
-      messages->window,
-      "%s | [%d] %s: %s",
-      GNUNET_TIME_absolute2s(timestamp),
-      (int) kind,
-      name,
-      text
-  );
+
+  switch (kind) {
+    case GNUNET_CHAT_KIND_JOIN:
+      wprintw(
+      	  messages->window,
+      	  "%s | %s joins the room.",
+      	  GNUNET_TIME_absolute2s(timestamp),
+      	  name
+      );
+      break;
+    case GNUNET_CHAT_KIND_LEAVE:
+      wprintw(
+	    messages->window,
+	    "%s | %s leaves the room.",
+	    GNUNET_TIME_absolute2s(timestamp),
+	    name
+      );
+      break;
+    case GNUNET_CHAT_KIND_INVITATION:
+      wprintw(
+	    messages->window,
+	    "%s | %s invites you to a room.",
+	    GNUNET_TIME_absolute2s(timestamp),
+	    name
+      );
+      break;
+    case GNUNET_CHAT_KIND_TEXT:
+    case GNUNET_CHAT_KIND_FILE:
+      wprintw(
+	  messages->window,
+	  "%s | %s: %s",
+	  GNUNET_TIME_absolute2s(timestamp),
+	  name,
+	  text
+      );
+      break;
+    default:
+      wprintw(
+	  messages->window,
+	  "%s | [%d] %s: %s",
+	  GNUNET_TIME_absolute2s(timestamp),
+	  (int) kind,
+	  name,
+	  text
+      );
+      break;
+  }
+
 
   if (selected) wattroff(messages->window, attrs_select);
 }
@@ -225,10 +285,14 @@ messages_print(UI_MESSAGES_Handle *messages)
   UI_MESSAGES_List *element = messages->head;
   while (element)
   {
-    _messages_iterate_print(messages, element->message);
-    element = element->next;
+    if (_messages_filter_drop(element->message))
+      goto skip_message;
 
+    _messages_iterate_print(messages, element->message);
     count++;
+
+  skip_message:
+    element = element->next;
   }
 
   const bool selected = (count == messages->line_selected);
