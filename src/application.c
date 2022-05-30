@@ -34,10 +34,17 @@ application_init(MESSENGER_Application *app,
   app->argc = argc;
   app->argv = argv;
 
-  initscr();
+  app->window = initscr();
+
+  if (!(app->window))
+  {
+    app->status = GNUNET_SYSERR;
+    return;
+  }
+
   noecho();
 
-  keypad(stdscr, TRUE);
+  keypad(app->window, TRUE);
   timeout(100);
 }
 
@@ -48,6 +55,9 @@ run (void *cls,
      const struct GNUNET_CONFIGURATION_Handle *cfg)
 {
   MESSENGER_Application *app = cls;
+
+  if (!(app->window))
+    return;
 
   chat_start(&(app->chat), app, cfg);
 }
@@ -70,6 +80,9 @@ application_run(MESSENGER_Application *app)
   );
 
   messages_clear(&(app->messages));
+
+  if (app->window)
+    delwin(app->window);
 
   endwin();
 }

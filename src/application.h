@@ -41,6 +41,7 @@ typedef struct MESSENGER_Application
   int argc;
 
   int status;
+  WINDOW *window;
 
   MESSENGER_Chat chat;
 
