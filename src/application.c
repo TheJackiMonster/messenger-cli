@@ -45,7 +45,7 @@ application_init(MESSENGER_Application *app,
   noecho();
 
   keypad(app->window, TRUE);
-  timeout(100);
+  timeout(10);
 }
 
 static void
@@ -79,7 +79,8 @@ application_run(MESSENGER_Application *app)
       app
   );
 
-  messages_clear(&(app->messages));
+  members_clear(&(app->current.members));
+  messages_clear(&(app->current.messages));
 
   if (app->window)
     delwin(app->window);

@@ -49,10 +49,8 @@ _chats_iterate_messages(void *cls,
 			struct GNUNET_CHAT_Context *context,
 			const struct GNUNET_CHAT_Message *message)
 {
-  UI_MESSAGES_Handle *messages = cls;
-
-  messages_add(messages, context, message);
-
+  MESSENGER_Chat *chat = cls;
+  chat_process_message(chat, context, message);
   return GNUNET_YES;
 }
 
@@ -101,17 +99,18 @@ chats_event(UI_CHATS_Handle *chats,
       {
 	struct GNUNET_CHAT_Context *context = GNUNET_CHAT_group_get_context(chats->selected);
 
-	messages_clear(&(app->messages));
+	members_clear(&(app->current.members));
+	messages_clear(&(app->current.messages));
+
+	GNUNET_CHAT_context_set_user_pointer(
+	    context,
+	    &(app->current)
+	);
 
 	GNUNET_CHAT_context_iterate_messages(
 	    context,
 	    &_chats_iterate_messages,
-	    &(app->messages)
-	);
-
-	GNUNET_CHAT_context_set_user_pointer(
-	    context,
-	    &(app->messages)
+	    &(app->chat)
 	);
 
 	app->chat.context = context;

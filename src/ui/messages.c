@@ -86,6 +86,11 @@ messages_event(UI_MESSAGES_Handle *messages,
       messages->line_selected++;
       break;
     }
+    case '\t':
+    {
+      app->chat.show_members = TRUE;
+      break;
+    }
     case '\n':
     case KEY_ENTER:
     {
@@ -337,7 +342,6 @@ _message_compare_timestamps(UNUSED void *cls,
 
 void
 messages_add(UI_MESSAGES_Handle *messages,
-	     struct GNUNET_CHAT_Context *context,
 	     const struct GNUNET_CHAT_Message *message)
 {
   enum GNUNET_CHAT_MessageKind kind = GNUNET_CHAT_message_get_kind(message);
@@ -349,15 +353,6 @@ messages_add(UI_MESSAGES_Handle *messages,
       return;
     default:
       break;
-  }
-
-  struct GNUNET_CHAT_Contact *sender = GNUNET_CHAT_message_get_sender(message);
-  struct GNUNET_CHAT_Group *group = GNUNET_CHAT_context_get_group(context);
-
-  if ((GNUNET_CHAT_KIND_JOIN == kind) &&
-      (GNUNET_CHAT_member_get_user_pointer(group, sender)))
-  {
-    return;
   }
 
   const int height = getmaxy(messages->window) - getbegy(messages->window);
@@ -384,9 +379,6 @@ messages_add(UI_MESSAGES_Handle *messages,
     element
   );
 
-  if (GNUNET_CHAT_KIND_JOIN == kind)
-    GNUNET_CHAT_member_set_user_pointer(group, sender, element);
-
   if (messages->line_selected >= count)
     messages->line_selected = count + 1;
 
@@ -396,7 +388,6 @@ messages_add(UI_MESSAGES_Handle *messages,
 
 void
 messages_remove(UI_MESSAGES_Handle *messages,
-		UNUSED struct GNUNET_CHAT_Context *context,
 	        const struct GNUNET_CHAT_Message *message)
 {
   UI_MESSAGES_List *element = messages->head;

@@ -32,8 +32,8 @@
 #include "util.h"
 
 #include "ui/accounts.h"
+#include "ui/chat.h"
 #include "ui/chats.h"
-#include "ui/messages.h"
 
 typedef struct MESSENGER_Application
 {
@@ -47,7 +47,7 @@ typedef struct MESSENGER_Application
 
   UI_ACCOUNTS_Handle accounts;
   UI_CHATS_Handle chats;
-  UI_MESSAGES_Handle messages;
+  UI_CHAT_Handle current;
 } MESSENGER_Application;
 
 void

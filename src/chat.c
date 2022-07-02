@@ -35,18 +35,25 @@ _chat_refresh(MESSENGER_Application *app)
 
   app->accounts.window = NULL;
   app->chats.window = NULL;
-  app->messages.window = NULL;
+  app->current.members.window = NULL;
+  app->current.messages.window = NULL;
 
   if (!account)
     app->accounts.window = stdscr;
   else if (app->chat.context)
-    app->messages.window = stdscr;
+  {
+    if (app->chat.show_members)
+      app->current.members.window = stdscr;
+    else
+      app->current.messages.window = stdscr;
+  }
   else
     app->chats.window = stdscr;
 
   accounts_print(&(app->accounts), app);
   chats_print(&(app->chats), app);
-  messages_print(&(app->messages));
+  members_print(&(app->current.members));
+  messages_print(&(app->current.messages));
 }
 
 static int
@@ -63,7 +70,12 @@ _chat_event(MESSENGER_Application *app,
   if (!account)
     accounts_event(&(app->accounts), app, key);
   else if (app->chat.context)
-    messages_event(&(app->messages), app, key);
+  {
+    if (app->chat.show_members)
+      members_event(&(app->current.members), app, key);
+    else
+      messages_event(&(app->current.messages), app, key);
+  }
   else
     chats_event(&(app->chats), app, key);
 
@@ -82,21 +94,7 @@ _chat_message(void *cls,
 {
   MESSENGER_Application *app = cls;
 
-  UI_MESSAGES_Handle *messages = (UI_MESSAGES_Handle*) (
-      GNUNET_CHAT_context_get_user_pointer(context)
-  );
-
-  if (messages)
-  {
-    if (GNUNET_CHAT_KIND_DELETION == GNUNET_CHAT_message_get_kind(message))
-      messages_remove(
-	  &(app->messages),
-	  context,
-	  GNUNET_CHAT_message_get_target(message)
-      );
-
-    messages_add(&(app->messages), context, message);
-  }
+  chat_process_message(&(app->chat), context, message);
 
   _chat_event(app, KEY_RESIZE);
   return GNUNET_YES;
@@ -159,4 +157,36 @@ chat_stop(MESSENGER_Chat *chat)
   chat->handle = NULL;
 
   chat->quit = GNUNET_YES;
+}
+
+void
+chat_process_message(UNUSED MESSENGER_Chat *chat,
+		     struct GNUNET_CHAT_Context *context,
+		     const struct GNUNET_CHAT_Message *message)
+{
+  enum GNUNET_CHAT_MessageKind kind = GNUNET_CHAT_message_get_kind(message);
+
+  struct GNUNET_CHAT_Contact *sender = GNUNET_CHAT_message_get_sender(message);
+
+  UI_CHAT_Handle *current = (UI_CHAT_Handle*) (
+      GNUNET_CHAT_context_get_user_pointer(context)
+  );
+
+  if (!current)
+    return;
+
+  bool new_member = FALSE;
+
+  if (GNUNET_CHAT_KIND_LEAVE)
+    members_remove(&(current->members), sender);
+  else if (GNUNET_CHAT_KIND_JOIN == kind)
+    new_member = members_add(&(current->members), sender);
+
+  if (GNUNET_CHAT_KIND_DELETION == kind)
+    messages_remove(
+	&(current->messages),
+	GNUNET_CHAT_message_get_target(message)
+    );
+  else if ((GNUNET_CHAT_KIND_JOIN != kind) || (new_member))
+    messages_add(&(current->messages), message);
 }

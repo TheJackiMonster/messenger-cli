@@ -19,11 +19,11 @@
  */
 /*
  * @author Tobias Frisch
- * @file ui/messages.h
+ * @file ui/members.h
  */
 
-#ifndef UI_MESSAGES_H_
-#define UI_MESSAGES_H_
+#ifndef UI_MEMBERS_H_
+#define UI_MEMBERS_H_
 
 #include <stdlib.h>
 #include <curses.h>
@@ -34,51 +34,45 @@
 
 struct MESSENGER_Application;
 
-typedef struct UI_MESSAGES_List
+typedef struct UI_MEMBERS_List
 {
-  const struct GNUNET_CHAT_Message *message;
+  const struct GNUNET_CHAT_Contact *contact;
 
-  struct UI_MESSAGES_List *prev;
-  struct UI_MESSAGES_List *next;
-} UI_MESSAGES_List;
+  struct UI_MEMBERS_List *prev;
+  struct UI_MEMBERS_List *next;
+} UI_MEMBERS_List;
 
-#define TEXT_LEN_MAX 1024
-
-typedef struct UI_MESSAGES_Handle
+typedef struct UI_MEMBERS_Handle
 {
   WINDOW *window;
 
-  UI_MESSAGES_List *head;
-  UI_MESSAGES_List *tail;
+  UI_MEMBERS_List *head;
+  UI_MEMBERS_List *tail;
 
   int line_index;
   int line_offset;
   int line_selected;
 
-  const struct GNUNET_CHAT_Message *selected;
-
-  char text [1024];
-  int text_len;
-  int text_pos;
-} UI_MESSAGES_Handle;
+  const struct GNUNET_CHAT_Contact *selected;
+} UI_MEMBERS_Handle;
 
 void
-messages_event(UI_MESSAGES_Handle *messages,
-	       struct MESSENGER_Application *app,
-	       int key);
+members_event(UI_MEMBERS_Handle *members,
+	      struct MESSENGER_Application *app,
+	      int key);
 
 void
-messages_print(UI_MESSAGES_Handle *messages);
+members_print(UI_MEMBERS_Handle *members);
 
 void
-messages_clear(UI_MESSAGES_Handle *messages);
+members_clear(UI_MEMBERS_Handle *members);
+
+bool
+members_add(UI_MEMBERS_Handle *members,
+	    const struct GNUNET_CHAT_Contact *contact);
 
 void
-messages_add(UI_MESSAGES_Handle *messages,
-	     const struct GNUNET_CHAT_Message *message);
+members_remove(UI_MEMBERS_Handle *members,
+	       const struct GNUNET_CHAT_Contact *contact);
 
-void
-messages_remove(UI_MESSAGES_Handle *messages,
-	        const struct GNUNET_CHAT_Message *message);
-
-#endif /* UI_MESSAGES_H_ */
+#endif /* UI_MEMBERS_H_ */
