@@ -33,22 +33,19 @@ _chat_refresh(MESSENGER_Application *app)
       app->chat.handle
   );
 
-  app->accounts.window = NULL;
-  app->chats.window = NULL;
-  app->current.members.window = NULL;
-  app->current.messages.window = NULL;
+  application_clear(app);
 
   if (!account)
-    app->accounts.window = stdscr;
+    app->accounts.window = app->window;
   else if (app->chat.context)
   {
     if (app->chat.show_members)
-      app->current.members.window = stdscr;
+      app->current.members.window = app->window;
     else
-      app->current.messages.window = stdscr;
+      app->current.messages.window = app->window;
   }
   else
-    app->chats.window = stdscr;
+    app->chats.window = app->window;
 
   accounts_print(&(app->accounts), app);
   chats_print(&(app->chats), app);
@@ -56,7 +53,7 @@ _chat_refresh(MESSENGER_Application *app)
   messages_print(&(app->current.messages));
 }
 
-static int
+static bool
 _chat_event(MESSENGER_Application *app,
 	    int key)
 {
@@ -79,12 +76,12 @@ _chat_event(MESSENGER_Application *app,
   else
     chats_event(&(app->chats), app, key);
 
-  if (GNUNET_YES == app->chat.quit)
-    return 1;
+  if (app->chat.quit)
+    return TRUE;
 
 refresh:
   _chat_refresh(app);
-  return 0;
+  return FALSE;
 }
 
 static int
@@ -106,7 +103,10 @@ _chat_idle(void *cls)
   MESSENGER_Application *app = cls;
   app->chat.idle = NULL;
 
-  if (0 != _chat_event(app, getch()))
+  if (app->chat.quit)
+    return;
+
+  if (_chat_event(app, wgetch(app->window)))
   {
     chat_stop(&(app->chat));
     return;
@@ -115,7 +115,7 @@ _chat_idle(void *cls)
   app->chat.idle = GNUNET_SCHEDULER_add_delayed_with_priority(
       GNUNET_TIME_relative_multiply(
 	  GNUNET_TIME_relative_get_millisecond_(),
-	  wgetdelay(stdscr)
+	  wgetdelay(app->window)
       ),
       GNUNET_SCHEDULER_PRIORITY_IDLE,
       &_chat_idle,
@@ -141,7 +141,7 @@ chat_start(MESSENGER_Chat *chat,
       app
   );
 
-  chat->quit = GNUNET_NO;
+  chat->quit = FALSE;
 }
 
 void
@@ -156,7 +156,7 @@ chat_stop(MESSENGER_Chat *chat)
   GNUNET_CHAT_stop(chat->handle);
   chat->handle = NULL;
 
-  chat->quit = GNUNET_YES;
+  chat->quit = TRUE;
 }
 
 void
@@ -177,7 +177,7 @@ chat_process_message(UNUSED MESSENGER_Chat *chat,
 
   bool new_member = FALSE;
 
-  if (GNUNET_CHAT_KIND_LEAVE)
+  if (GNUNET_CHAT_KIND_LEAVE == kind)
     members_remove(&(current->members), sender);
   else if (GNUNET_CHAT_KIND_JOIN == kind)
     new_member = members_add(&(current->members), sender);

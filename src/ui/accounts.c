@@ -69,7 +69,7 @@ accounts_event(UI_ACCOUNTS_Handle *accounts,
     case 27:
     case KEY_EXIT:
     {
-      app->chat.quit = GNUNET_YES;
+      app->chat.quit = TRUE;
       break;
     }
     case KEY_UP:

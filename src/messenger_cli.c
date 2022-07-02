@@ -32,5 +32,8 @@ main (int argc, char** argv)
   application_init(&app, argc, argv);
   application_run(&app);
 
-  return application_status(&app);
+  const int status = application_status(&app);
+
+  exit_curses(status);
+  return status;
 }

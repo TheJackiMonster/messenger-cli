@@ -25,6 +25,15 @@
 #include "application.h"
 
 void
+application_clear(MESSENGER_Application *app)
+{
+  app->accounts.window = NULL;
+  app->chats.window = NULL;
+  app->current.members.window = NULL;
+  app->current.messages.window = NULL;
+}
+
+void
 application_init(MESSENGER_Application *app,
 		 int argc,
 		 char **argv)
@@ -45,7 +54,7 @@ application_init(MESSENGER_Application *app,
   noecho();
 
   keypad(app->window, TRUE);
-  timeout(10);
+  wtimeout(app->window, 10);
 }
 
 static void
@@ -82,10 +91,16 @@ application_run(MESSENGER_Application *app)
   members_clear(&(app->current.members));
   messages_clear(&(app->current.messages));
 
+  application_clear(app);
+
   if (app->window)
     delwin(app->window);
 
-  endwin();
+  if (ERR == endwin())
+  {
+    app->status = GNUNET_SYSERR;
+    return;
+  }
 }
 
 int

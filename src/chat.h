@@ -39,7 +39,7 @@ typedef struct MESSENGER_Chat
   struct GNUNET_SCHEDULER_Task *idle;
 
   bool show_members;
-  int quit;
+  bool quit;
 } MESSENGER_Chat;
 
 void

@@ -51,6 +51,9 @@ typedef struct MESSENGER_Application
 } MESSENGER_Application;
 
 void
+application_clear(MESSENGER_Application *app);
+
+void
 application_init(MESSENGER_Application *app,
 		 int argc,
 		 char **argv);

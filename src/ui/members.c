@@ -124,7 +124,14 @@ _members_iterate_print(UI_MEMBERS_Handle *members,
   wmove(members->window, y, 0);
 
   const char *name = GNUNET_CHAT_contact_get_name(contact);
-  wprintw(members->window, "%s", name);
+  const char *key = GNUNET_CHAT_contact_get_key(contact);
+
+  size_t key_len = key? strlen(key) : 0;
+
+  if (key_len > 4)
+    wprintw(members->window, "[%s]: %s", key + (key_len - 4), name);
+  else
+    wprintw(members->window, "%s", name);
 
   if (selected) wattroff(members->window, attrs_select);
 }
