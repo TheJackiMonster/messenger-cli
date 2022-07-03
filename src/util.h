@@ -26,7 +26,12 @@
 #define UTIL_H_
 
 #include <stdbool.h>
+#include <stdlib.h>
+#include <curses.h>
 
 #define UNUSED __attribute__((unused))
+
+void
+util_print_logo(WINDOW *window);
 
 #endif /* UTIL_H_ */
