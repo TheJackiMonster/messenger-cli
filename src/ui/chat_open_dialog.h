@@ -32,7 +32,7 @@ struct MESSENGER_Application;
 
 typedef struct UI_CHAT_OPEN_DIALOG_Handle
 {
-  WINDOW *window;
+  WINDOW **window;
 
   char topic [256];
   int topic_len;

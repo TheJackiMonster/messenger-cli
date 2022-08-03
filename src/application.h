@@ -43,6 +43,14 @@ typedef struct MESSENGER_Application
   int status;
   WINDOW *window;
 
+  struct {
+    WINDOW *logo;
+    WINDOW *main;
+    WINDOW *left;
+    WINDOW *right;
+    WINDOW *input;
+  } ui;
+
   MESSENGER_Chat chat;
 
   UI_ACCOUNTS_Handle accounts;
@@ -57,6 +65,9 @@ void
 application_init(MESSENGER_Application *app,
 		 int argc,
 		 char **argv);
+
+void
+application_refresh(MESSENGER_Application *app);
 
 void
 application_run(MESSENGER_Application *app);

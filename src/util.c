@@ -30,14 +30,14 @@ util_print_logo(WINDOW *window)
   int x = getcurx(window);
   int y = getcury(window);
 
-  wmove(window, x, y++); wprintw(window, "                            ");
-  wmove(window, x, y++); wprintw(window, "    o/                 \\o   ");
-  wmove(window, x, y++); wprintw(window, "  ooo                   oo  ");
-  wmove(window, x, y++); wprintw(window, "    \\oooo\\        /oooo/    ");
-  wmove(window, x, y++); wprintw(window, "         oo      ooo        ");
-  wmove(window, x, y++); wprintw(window, "          oo    ooo         ");
-  wmove(window, x, y++); wprintw(window, "           ooooooo          ");
-  wmove(window, x, y++); wprintw(window, "           \\oooo/           ");
-  wmove(window, x, y++); wprintw(window, "            oooo            ");
-  wmove(window, x, y++); wprintw(window, "                            ");
+  wmove(window, y++, x); wprintw(window, "                            ");
+  wmove(window, y++, x); wprintw(window, "    o/                 \\o   ");
+  wmove(window, y++, x); wprintw(window, "  ooo                   oo  ");
+  wmove(window, y++, x); wprintw(window, "    \\oooo\\        /oooo/    ");
+  wmove(window, y++, x); wprintw(window, "         oo      ooo        ");
+  wmove(window, y++, x); wprintw(window, "          oo    ooo         ");
+  wmove(window, y++, x); wprintw(window, "           ooooooo          ");
+  wmove(window, y++, x); wprintw(window, "           \\oooo/           ");
+  wmove(window, y++, x); wprintw(window, "            oooo            ");
+  wmove(window, y++, x); wprintw(window, "                            ");
 }

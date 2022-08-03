@@ -56,6 +56,8 @@ typedef struct UI_MEMBERS_Handle
   const struct GNUNET_CHAT_Contact *selected;
 } UI_MEMBERS_Handle;
 
+#define UI_MEMBERS_COLS_MIN 30
+
 void
 members_event(UI_MEMBERS_Handle *members,
 	      struct MESSENGER_Application *app,

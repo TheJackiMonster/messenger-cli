@@ -114,9 +114,14 @@ chat_open_dialog_print(UI_CHAT_OPEN_DIALOG_Handle *open_dialog,
   if (!(open_dialog->window))
     return;
 
-  werase(open_dialog->window);
-  wmove(open_dialog->window, 0, 0);
+  WINDOW *window = *(open_dialog->window);
 
-  wprintw(open_dialog->window, "%s", open_dialog->topic);
-  wmove(open_dialog->window, 0, open_dialog->topic_pos);
+  werase(window);
+  wmove(window, 0, 0);
+
+  wprintw(window, "%s", open_dialog->topic);
+  wmove(window, 0, open_dialog->topic_pos);
+
+  wcursyncup(window);
+  curs_set(1);
 }

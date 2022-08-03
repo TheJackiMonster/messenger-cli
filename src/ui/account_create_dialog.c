@@ -114,9 +114,14 @@ account_create_dialog_print(UI_ACCOUNT_CREATE_DIALOG_Handle *create_dialog,
   if (!(create_dialog->window))
     return;
 
-  werase(create_dialog->window);
-  wmove(create_dialog->window, 0, 0);
+  WINDOW *window = *(create_dialog->window);
 
-  wprintw(create_dialog->window, "%s", create_dialog->name);
-  wmove(create_dialog->window, 0, create_dialog->name_pos);
+  werase(window);
+  wmove(window, 0, 0);
+
+  wprintw(window, "%s", create_dialog->name);
+  wmove(window, 0, create_dialog->name_pos);
+
+  wcursyncup(window);
+  curs_set(1);
 }

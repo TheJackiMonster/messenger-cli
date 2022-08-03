@@ -51,10 +51,26 @@ application_init(MESSENGER_Application *app,
     return;
   }
 
+  application_refresh(app);
+
   noecho();
 
   keypad(app->window, TRUE);
   wtimeout(app->window, 10);
+}
+
+void
+application_refresh(MESSENGER_Application *app)
+{
+  if (app->ui.logo) delwin(app->ui.logo);
+  if (app->ui.main) delwin(app->ui.main);
+  if (app->ui.left) delwin(app->ui.left);
+  if (app->ui.right) delwin(app->ui.right);
+  if (app->ui.input) delwin(app->ui.input);
+
+  memset(&(app->ui), 0, sizeof(app->ui));
+
+  curs_set(0);
 }
 
 static void

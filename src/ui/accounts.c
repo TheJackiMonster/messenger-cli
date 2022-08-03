@@ -88,7 +88,7 @@ accounts_event(UI_ACCOUNTS_Handle *accounts,
       if (accounts->selected)
 	GNUNET_CHAT_connect(app->chat.handle, accounts->selected);
       else
-	accounts->create_dialog.window = accounts->window;
+	accounts->create_dialog.window = &(accounts->window);
       break;
     }
     default:
@@ -103,7 +103,7 @@ accounts_event(UI_ACCOUNTS_Handle *accounts,
   if (!(accounts->window))
     return;
 
-  const int height = getmaxy(accounts->window) - getbegy(accounts->window);
+  const int height = getmaxy(accounts->window);
   const int y = accounts->line_selected - accounts->line_offset;
 
   if (y < 0)
@@ -130,7 +130,7 @@ _accounts_print_entry(UI_ACCOUNTS_Handle *accounts,
   if (y < 0)
     return GNUNET_YES;
 
-  const int height = getmaxy(accounts->window) - getbegy(accounts->window);
+  const int height = getmaxy(accounts->window);
 
   if (y >= height)
     return GNUNET_NO;

@@ -32,7 +32,7 @@ struct MESSENGER_Application;
 
 typedef struct UI_ACCOUNT_CREATE_DIALOG_Handle
 {
-  WINDOW *window;
+  WINDOW **window;
 
   char name [256];
   int name_len;

@@ -141,7 +141,7 @@ chats_event(UI_CHATS_Handle *chats,
 	app->chat.context = chats->selected;
       }
       else
-	chats->open_dialog.window = chats->window;
+	chats->open_dialog.window = &(chats->window);
       break;
     }
     default:
@@ -156,7 +156,7 @@ chats_event(UI_CHATS_Handle *chats,
   if (!(chats->window))
     return;
 
-  const int height = getmaxy(chats->window) - getbegy(chats->window);
+  const int height = getmaxy(chats->window);
   const int y = chats->line_selected - chats->line_offset;
 
   if (y < 0)
@@ -184,7 +184,7 @@ _chats_print_entry(UI_CHATS_Handle *chats,
   if (y < 0)
     return GNUNET_YES;
 
-  const int height = getmaxy(chats->window) - getbegy(chats->window);
+  const int height = getmaxy(chats->window);
 
   if (y >= height)
     return GNUNET_NO;

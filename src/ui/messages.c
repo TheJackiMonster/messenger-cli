@@ -158,7 +158,7 @@ messages_event(UI_MESSAGES_Handle *messages,
   if (!(messages->window))
     return;
 
-  const int height = getmaxy(messages->window) - getbegy(messages->window);
+  const int height = getmaxy(messages->window);
   const int y = messages->line_selected - messages->line_offset;
 
   const int line_height = height - 2;
@@ -188,7 +188,7 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
   if (y < 0)
     return;
 
-  const int height = getmaxy(messages->window) - getbegy(messages->window);
+  const int height = getmaxy(messages->window);
   const int line_height = height - 2;
 
   if (y >= line_height)
@@ -199,38 +199,49 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
   const char *name = sender? GNUNET_CHAT_contact_get_name(sender) : NULL;
   const char *text = GNUNET_CHAT_message_get_text(message);
 
-  struct GNUNET_TIME_Absolute timestamp = GNUNET_CHAT_message_get_timestamp(
+  struct GNUNET_TIME_Absolute abs_time = GNUNET_CHAT_message_get_timestamp(
       message
   );
+
+  struct GNUNET_TIME_Timestamp timestamp = GNUNET_TIME_absolute_to_timestamp(
+      abs_time
+  );
+
+  const time_t s_after_epoch = (
+      GNUNET_TIME_timestamp_to_s(timestamp)
+  );
+
+  struct tm* ts = localtime(&s_after_epoch);
+  char time_buf [255];
+
+  strftime(time_buf, sizeof(time_buf), "%H:%M", ts);
 
   const int attrs_select = A_BOLD;
 
   if (selected) wattron(messages->window, attrs_select);
 
   wmove(messages->window, y, 0);
+  wprintw(messages->window, "%s | ", time_buf);
 
   switch (kind) {
     case GNUNET_CHAT_KIND_JOIN:
       wprintw(
       	  messages->window,
-      	  "%s | %s joins the room.",
-      	  GNUNET_TIME_absolute2s(timestamp),
+      	  "%s joins the room.",
       	  name
       );
       break;
     case GNUNET_CHAT_KIND_LEAVE:
       wprintw(
 	    messages->window,
-	    "%s | %s leaves the room.",
-	    GNUNET_TIME_absolute2s(timestamp),
+	    "%s leaves the room.",
 	    name
       );
       break;
     case GNUNET_CHAT_KIND_INVITATION:
       wprintw(
 	    messages->window,
-	    "%s | %s invites you to a room.",
-	    GNUNET_TIME_absolute2s(timestamp),
+	    "%s invites you to a room.",
 	    name
       );
       break;
@@ -238,8 +249,7 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
     case GNUNET_CHAT_KIND_FILE:
       wprintw(
 	  messages->window,
-	  "%s | %s: %s",
-	  GNUNET_TIME_absolute2s(timestamp),
+	  "%s: %s",
 	  name,
 	  text
       );
@@ -247,8 +257,7 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
     default:
       wprintw(
 	  messages->window,
-	  "%s | [%d] %s: %s",
-	  GNUNET_TIME_absolute2s(timestamp),
+	  "[%d] %s: %s",
 	  (int) kind,
 	  name,
 	  text
@@ -282,8 +291,8 @@ messages_print(UI_MESSAGES_Handle *messages)
 
   const bool selected = (count == messages->line_selected);
 
-  const int width = getmaxx(messages->window) - getbegx(messages->window);
-  const int height = getmaxy(messages->window) - getbegy(messages->window);
+  const int width = getmaxx(messages->window);
+  const int height = getmaxy(messages->window);
   const int line_height = height - 2;
 
   wmove(messages->window, line_height, 0);
@@ -299,6 +308,12 @@ messages_print(UI_MESSAGES_Handle *messages)
   if (selected) wattroff(messages->window, attrs_select);
 
   wmove(messages->window, height - 1, messages->text_pos);
+
+  if (selected)
+  {
+    wcursyncup(messages->window);
+    curs_set(1);
+  }
 }
 
 void
@@ -355,7 +370,7 @@ messages_add(UI_MESSAGES_Handle *messages,
       break;
   }
 
-  const int height = getmaxy(messages->window) - getbegy(messages->window);
+  const int height = getmaxy(messages->window);
   const int line_height = height - 2;
 
   int count = 0;

@@ -62,6 +62,8 @@ typedef struct UI_MESSAGES_Handle
   int text_pos;
 } UI_MESSAGES_Handle;
 
+#define UI_MESSAGES_COLS_MIN 50
+
 void
 messages_event(UI_MESSAGES_Handle *messages,
 	       struct MESSENGER_Application *app,

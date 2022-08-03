@@ -49,6 +49,9 @@ typedef struct UI_ACCOUNTS_Handle
   UI_ACCOUNT_CREATE_DIALOG_Handle create_dialog;
 } UI_ACCOUNTS_Handle;
 
+#define UI_ACCOUNTS_ROWS_MIN 5
+#define UI_ACCOUNTS_COLS_MIN 30
+
 void
 accounts_event(UI_ACCOUNTS_Handle *accounts,
 	       struct MESSENGER_Application *app,

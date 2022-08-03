@@ -49,6 +49,9 @@ typedef struct UI_CHATS_Handle
   UI_CHAT_OPEN_DIALOG_Handle open_dialog;
 } UI_CHATS_Handle;
 
+#define UI_CHATS_ROWS_MIN 8
+#define UI_CHATS_COLS_MIN 30
+
 void
 chats_event(UI_CHATS_Handle *chats,
 	    struct MESSENGER_Application *app,

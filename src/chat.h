@@ -51,6 +51,10 @@ void
 chat_stop(MESSENGER_Chat *chat);
 
 void
+chat_update_layout(MESSENGER_Chat *chat,
+		   struct MESSENGER_Application *app);
+
+void
 chat_process_message(MESSENGER_Chat *chat,
 		     struct GNUNET_CHAT_Context *context,
 		     const struct GNUNET_CHAT_Message *message);

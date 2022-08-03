@@ -25,32 +25,26 @@
 #include "chat.h"
 
 #include "application.h"
+#include "util.h"
 
 static void
 _chat_refresh(MESSENGER_Application *app)
 {
-  const struct GNUNET_CHAT_Account *account = GNUNET_CHAT_get_connected(
-      app->chat.handle
-  );
-
   application_clear(app);
-
-  if (!account)
-    app->accounts.window = app->window;
-  else if (app->chat.context)
-  {
-    if (app->chat.show_members)
-      app->current.members.window = app->window;
-    else
-      app->current.messages.window = app->window;
-  }
-  else
-    app->chats.window = app->window;
+  chat_update_layout(&(app->chat), app);
 
   accounts_print(&(app->accounts), app);
   chats_print(&(app->chats), app);
   members_print(&(app->current.members));
   messages_print(&(app->current.messages));
+
+  if (!app->ui.logo)
+    return;
+
+  werase(app->ui.logo);
+  wmove(app->ui.logo, 0, 0);
+
+  util_print_logo(app->ui.logo);
 }
 
 static bool
@@ -157,6 +151,180 @@ chat_stop(MESSENGER_Chat *chat)
   chat->handle = NULL;
 
   chat->quit = TRUE;
+}
+
+void
+_chat_update_layout_accounts(struct MESSENGER_Application *app)
+{
+  int rows, cols;
+  getmaxyx(app->window, rows, cols);
+
+  if (rows >= UTIL_LOGO_ROWS + UI_ACCOUNTS_ROWS_MIN)
+  {
+    const int offset = UTIL_LOGO_ROWS + 1;
+
+    app->ui.logo = subwin(app->window, UTIL_LOGO_ROWS, cols, 0, 0);
+    app->ui.main = subwin(app->window, rows - offset, cols, offset, 0);
+
+    wmove(app->window, UTIL_LOGO_ROWS, 0);
+    whline(app->window, ACS_HLINE, cols);
+  }
+  else
+    app->ui.main = subwin(app->window, rows, cols, 0, 0);
+
+  app->accounts.window = app->ui.main;
+}
+
+void
+_chat_update_layout_chats(struct MESSENGER_Application *app)
+{
+  int rows, cols;
+  getmaxyx(app->window, rows, cols);
+
+  int min_rows = UI_CHATS_ROWS_MIN;
+  int offset_x = 0;
+  int offset_y = 0;
+
+  if (cols >= UI_ACCOUNTS_COLS_MIN + UI_CHATS_COLS_MIN)
+  {
+    offset_x = UI_ACCOUNTS_COLS_MIN + 1;
+
+    if (UI_ACCOUNTS_ROWS_MIN > min_rows) min_rows = UI_ACCOUNTS_ROWS_MIN;
+  }
+
+  if (rows >= UTIL_LOGO_ROWS + min_rows)
+  {
+    offset_y = UTIL_LOGO_ROWS + 1;
+
+    app->ui.logo = subwin(app->window, UTIL_LOGO_ROWS, cols, 0, 0);
+
+    wmove(app->window, UTIL_LOGO_ROWS, 0);
+    whline(app->window, ACS_HLINE, cols);
+  }
+
+  if (offset_x > 0)
+  {
+    app->ui.left = subwin(
+	app->window,
+	rows - offset_y,
+	UI_ACCOUNTS_COLS_MIN,
+	offset_y,
+	0
+    );
+
+    wmove(app->window, offset_y > 0? offset_y : 0, UI_ACCOUNTS_COLS_MIN);
+    wvline(app->window, ACS_VLINE, rows - offset_y);
+
+    if (offset_y > 0)
+    {
+      wmove(app->window, offset_y - 1, UI_ACCOUNTS_COLS_MIN);
+      waddch(app->window, ACS_TTEE);
+    }
+  }
+
+  app->ui.main = subwin(
+      app->window,
+      rows - offset_y,
+      cols - offset_x,
+      offset_y,
+      offset_x
+  );
+
+  app->accounts.window = app->ui.left;
+  app->chats.window = app->ui.main;
+}
+
+void
+_chat_update_layout_messages(struct MESSENGER_Application *app)
+{
+  int rows, cols;
+  getmaxyx(app->window, rows, cols);
+
+  const int cols_min_left = (UTIL_LOGO_COLS > UI_CHATS_COLS_MIN?
+      UTIL_LOGO_COLS : UI_CHATS_COLS_MIN
+  );
+
+  int offset_x = 0;
+
+  if (cols >= cols_min_left + UI_MESSAGES_COLS_MIN)
+    offset_x = cols_min_left + 1;
+  else
+    goto skip_left_split;
+
+  if (rows >= UTIL_LOGO_ROWS + UI_CHATS_ROWS_MIN)
+  {
+    const int offset = UTIL_LOGO_ROWS + 1;
+
+    app->ui.logo = subwin(app->window, UTIL_LOGO_ROWS, cols_min_left, 0, 0);
+    app->ui.left = subwin(app->window, rows - offset, cols_min_left, offset, 0);
+
+    wmove(app->window, UTIL_LOGO_ROWS, 0);
+    whline(app->window, ACS_HLINE, cols_min_left);
+  }
+  else
+    app->ui.left = subwin(app->window, rows, cols_min_left, 0, 0);
+
+  int cut_x = 0;
+
+  if (cols >= cols_min_left + UI_MESSAGES_COLS_MIN + UI_MEMBERS_COLS_MIN)
+  {
+    cut_x = UI_MEMBERS_COLS_MIN + 1;
+
+    app->ui.right = subwin(
+	app->window,
+	rows,
+	UI_MEMBERS_COLS_MIN,
+	0,
+	cols - UI_MEMBERS_COLS_MIN
+    );
+
+    wmove(app->window, 0, cols - cut_x);
+    wvline(app->window, ACS_VLINE, rows);
+  }
+
+  wmove(app->window, 0, cols_min_left);
+  wvline(app->window, ACS_VLINE, rows);
+
+skip_left_split:
+  app->ui.main = subwin(
+      app->window,
+      rows,
+      cols - offset_x - cut_x,
+      0,
+      offset_x
+  );
+
+  app->chats.window = app->ui.left;
+
+  if (app->ui.right)
+  {
+    app->current.members.window = app->ui.right;
+    app->current.messages.window = app->ui.main;
+    return;
+  }
+
+  if (app->chat.show_members)
+    app->current.members.window = app->ui.main;
+  else
+    app->current.messages.window = app->ui.main;
+}
+
+void
+chat_update_layout(MESSENGER_Chat *chat,
+		   struct MESSENGER_Application *app)
+{
+  const struct GNUNET_CHAT_Account *account = GNUNET_CHAT_get_connected(
+      chat->handle
+  );
+
+  application_refresh(app);
+
+  if (!account)
+    _chat_update_layout_accounts(app);
+  else if (app->chat.context)
+    _chat_update_layout_messages(app);
+  else
+    _chat_update_layout_chats(app);
 }
 
 void

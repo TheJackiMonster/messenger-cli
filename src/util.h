@@ -31,6 +31,9 @@
 
 #define UNUSED __attribute__((unused))
 
+#define UTIL_LOGO_ROWS 10
+#define UTIL_LOGO_COLS 28
+
 void
 util_print_logo(WINDOW *window);
 

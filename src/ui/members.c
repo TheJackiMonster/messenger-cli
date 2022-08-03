@@ -86,7 +86,7 @@ members_event(UI_MEMBERS_Handle *members,
   if (!(members->window))
     return;
 
-  const int height = getmaxy(members->window) - getbegy(members->window);
+  const int height = getmaxy(members->window);
   const int y = members->line_selected - members->line_offset;
 
   if (y < 0)
@@ -112,7 +112,7 @@ _members_iterate_print(UI_MEMBERS_Handle *members,
   if (y < 0)
     return;
 
-  const int height = getmaxy(members->window) - getbegy(members->window);
+  const int height = getmaxy(members->window);
 
   if (y >= height)
     return;
