@@ -39,6 +39,38 @@ _messages_iterate(UI_MESSAGES_Handle *messages,
     messages->selected = message;
 }
 
+
+
+void
+_messages_handle_message(UI_MESSAGES_Handle *messages)
+{
+  switch (GNUNET_CHAT_message_get_kind(messages->selected))
+  {
+    case GNUNET_CHAT_KIND_INVITATION:
+    {
+      struct GNUNET_CHAT_Invitation *invitation = (
+	  GNUNET_CHAT_message_get_invitation(messages->selected)
+      );
+
+      if (invitation)
+	GNUNET_CHAT_invitation_accept(invitation);
+      break;
+    }
+    case GNUNET_CHAT_KIND_FILE:
+    {
+      struct GNUNET_CHAT_File *file = GNUNET_CHAT_message_get_file(
+	  messages->selected
+      );
+
+      if ((file) && (GNUNET_YES != GNUNET_CHAT_file_is_downloading(file)))
+	GNUNET_CHAT_file_start_download(file, NULL, NULL);
+      break;
+    default:
+      break;
+    }
+  }
+}
+
 void
 messages_event(UI_MESSAGES_Handle *messages,
 	       MESSENGER_Application *app,
@@ -94,7 +126,9 @@ messages_event(UI_MESSAGES_Handle *messages,
     case '\n':
     case KEY_ENTER:
     {
-      if ((!(messages->selected)) && (messages->text_len > 0))
+      if (messages->selected)
+	_messages_handle_message(messages);
+      else if (messages->text_len > 0)
       {
 	GNUNET_CHAT_context_send_text(app->chat.context, messages->text);
 	messages->text_len = 0;
@@ -199,6 +233,8 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
   const char *name = sender? GNUNET_CHAT_contact_get_name(sender) : NULL;
   const char *text = GNUNET_CHAT_message_get_text(message);
 
+  const struct GNUNET_CHAT_File *file = GNUNET_CHAT_message_get_file(message);
+
   struct GNUNET_TIME_Absolute abs_time = GNUNET_CHAT_message_get_timestamp(
       message
   );
@@ -246,14 +282,29 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
       );
       break;
     case GNUNET_CHAT_KIND_TEXT:
-    case GNUNET_CHAT_KIND_FILE:
       wprintw(
 	  messages->window,
-	  "%s: %s",
-	  name,
-	  text
+      	  "%s: %s",
+      	  name,
+      	  text
       );
       break;
+    case GNUNET_CHAT_KIND_FILE: {
+      const char *filename = GNUNET_CHAT_file_get_name(file);
+
+      const uint64_t localsize = GNUNET_CHAT_file_get_local_size(file);
+      const uint64_t filesize = GNUNET_CHAT_file_get_size(file);
+
+      wprintw(
+	  messages->window,
+	  "%s shares the file '%s' (%lu / %lu) with you.",
+	  name,
+	  filename,
+	  localsize,
+	  filesize
+      );
+      break;
+    }
     default:
       wprintw(
 	  messages->window,
