@@ -85,7 +85,7 @@ chats_event(UI_CHATS_Handle *chats,
   chats->line_index = 0;
   chats->selected = NULL;
 
-  int count = 1;
+  int count = 3;
 
   count += GNUNET_CHAT_iterate_groups(
       app->chat.handle,
@@ -258,4 +258,6 @@ chats_print(UI_CHATS_Handle *chats,
   );
 
   _chats_print_entry(chats, '+', '\0', "Add chat");
+  _chats_print_entry(chats, '+', '\0', "Open lobby");
+  _chats_print_entry(chats, '+', '\0', "Enter lobby");
 }
