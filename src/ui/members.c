@@ -50,13 +50,19 @@ members_event(UI_MEMBERS_Handle *members,
       app->chat.show_members = FALSE;
       break;
     case '\n':
-    case KEY_ENTER:
-      if (members->selected)
-      {
-	// TODO
-      }
+    case KEY_ENTER: {
+      struct GNUNET_CHAT_Context *context;
 
+      if (!(members->selected))
+	break;
+
+      context = GNUNET_CHAT_contact_get_context(members->selected);
+      GNUNET_CHAT_context_request(context);
+
+      app->chat.show_members = FALSE;
+      app->chat.context = context;
       break;
+    }
     default:
       break;
   }
@@ -128,7 +134,7 @@ members_clear(UI_MEMBERS_Handle *members)
 
 bool
 members_add(UI_MEMBERS_Handle *members,
-	    const struct GNUNET_CHAT_Contact *contact)
+	    struct GNUNET_CHAT_Contact *contact)
 {
   UI_MEMBERS_List *element = members->head;
   while (element)

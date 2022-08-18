@@ -37,7 +37,7 @@ struct MESSENGER_Application;
 
 typedef struct UI_MEMBERS_List
 {
-  const struct GNUNET_CHAT_Contact *contact;
+  struct GNUNET_CHAT_Contact *contact;
 
   struct UI_MEMBERS_List *prev;
   struct UI_MEMBERS_List *next;
@@ -54,7 +54,7 @@ typedef struct UI_MEMBERS_Handle
   int line_offset;
   int line_selected;
 
-  const struct GNUNET_CHAT_Contact *selected;
+  struct GNUNET_CHAT_Contact *selected;
 } UI_MEMBERS_Handle;
 
 #define UI_MEMBERS_COLS_MIN 30
@@ -72,7 +72,7 @@ members_clear(UI_MEMBERS_Handle *members);
 
 bool
 members_add(UI_MEMBERS_Handle *members,
-	    const struct GNUNET_CHAT_Contact *contact);
+	    struct GNUNET_CHAT_Contact *contact);
 
 void
 members_remove(UI_MEMBERS_Handle *members,
