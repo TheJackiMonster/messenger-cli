@@ -24,12 +24,11 @@
 
 #include "account_create_dialog.h"
 
-#include <ctype.h>
-
 #include <gnunet/platform.h>
 #include <gnunet/gnunet_chat_lib.h>
 #include <gnunet/gnunet_util_lib.h>
 
+#include "text_input.h"
 #include "../application.h"
 #include "../util.h"
 
@@ -42,69 +41,21 @@ account_create_dialog_event(UI_ACCOUNT_CREATE_DIALOG_Handle *create_dialog,
   {
     case 27:
     case KEY_EXIT:
-    {
       create_dialog->window = NULL;
       break;
-    }
-    case KEY_LEFT:
-    {
-      create_dialog->name_pos--;
-      break;
-    }
-    case KEY_RIGHT:
-    {
-      create_dialog->name_pos++;
-      break;
-    }
     case '\n':
     case KEY_ENTER:
-    {
       if (create_dialog->name_len > 0)
 	GNUNET_CHAT_account_create(app->chat.handle, create_dialog->name);
 
       create_dialog->name_len = 0;
       create_dialog->window = NULL;
       break;
-    }
-    case KEY_BACKSPACE:
-    {
-      if ((create_dialog->name_pos < create_dialog->name_len) &&
-	  (create_dialog->name_pos > 0))
-	for (int i = create_dialog->name_pos; i < create_dialog->name_len; i++)
-	  create_dialog->name[i - 1] = create_dialog->name[i];
-
-      if ((create_dialog->name_pos > 0) && (create_dialog->name_len > 0))
-      {
-	create_dialog->name_pos--;
-	create_dialog->name_len--;
-      }
-
-      break;
-    }
     default:
-    {
-      if (!isprint(key))
-	break;
-
-      for (int i = create_dialog->name_len - 1; i >= create_dialog->name_pos; i--)
-	create_dialog->name[i + 1] = create_dialog->name[i];
-
-      create_dialog->name[create_dialog->name_pos++] = (char) key;
-      create_dialog->name_len++;
       break;
-    }
   }
 
-  if (create_dialog->name_len > 255)
-    create_dialog->name_len = 255;
-
-  create_dialog->name[create_dialog->name_len] = '\0';
-
-  if (create_dialog->name_pos < 0)
-    create_dialog->name_pos = 0;
-
-  if (create_dialog->name_pos > create_dialog->name_len)
-    create_dialog->name_pos = create_dialog->name_len;
+  text_input_event(create_dialog->name, key);
 }
 
 void

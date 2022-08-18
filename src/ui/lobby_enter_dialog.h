@@ -19,50 +19,35 @@
  */
 /*
  * @author Tobias Frisch
- * @file ui/chats.h
+ * @file ui/lobby_enter_dialog.h
  */
 
-#ifndef UI_CHATS_H_
-#define UI_CHATS_H_
+#ifndef UI_LOBBY_ENTER_DIALOG_H_
+#define UI_LOBBY_ENTER_DIALOG_H_
 
 #include <stdlib.h>
 #include <curses.h>
 
-#include <gnunet/platform.h>
-#include <gnunet/gnunet_chat_lib.h>
-#include <gnunet/gnunet_util_lib.h>
-
-#include "chat_open_dialog.h"
-
-#include "lobby_enter_dialog.h"
-
 struct MESSENGER_Application;
 
-typedef struct UI_CHATS_Handle
+typedef struct UI_LOBBY_ENTER_DIALOG_Handle
 {
-  WINDOW *window;
+  WINDOW **window;
 
-  int line_index;
-  int line_offset;
-  int line_selected;
+  char *error;
 
-  struct GNUNET_CHAT_Context *selected;
-
-  UI_CHAT_OPEN_DIALOG_Handle open_dialog;
-
-  UI_LOBBY_ENTER_DIALOG_Handle enter_dialog;
-} UI_CHATS_Handle;
-
-#define UI_CHATS_ROWS_MIN 8
-#define UI_CHATS_COLS_MIN 30
+  char uri [2048];
+  int uri_len;
+  int uri_pos;
+} UI_LOBBY_ENTER_DIALOG_Handle;
 
 void
-chats_event(UI_CHATS_Handle *chats,
-	    struct MESSENGER_Application *app,
-	    int key);
+lobby_enter_dialog_event(UI_LOBBY_ENTER_DIALOG_Handle *enter_dialog,
+		         struct MESSENGER_Application *app,
+		         int key);
 
 void
-chats_print(UI_CHATS_Handle *chats,
-	    struct MESSENGER_Application *app);
+lobby_enter_dialog_print(UI_LOBBY_ENTER_DIALOG_Handle *enter_dialog,
+		         struct MESSENGER_Application *app);
 
-#endif /* UI_CHATS_H_ */
+#endif /* UI_LOBBY_ENTER_DIALOG_H_ */

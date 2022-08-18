@@ -81,6 +81,11 @@ chats_event(UI_CHATS_Handle *chats,
     chat_open_dialog_event(&(chats->open_dialog), app, key);
     return;
   }
+  else if (chats->enter_dialog.window)
+  {
+    lobby_enter_dialog_event(&(chats->enter_dialog), app, key);
+    return;
+  }
 
   chats->line_index = 0;
   chats->selected = NULL;
@@ -140,8 +145,10 @@ chats_event(UI_CHATS_Handle *chats,
 
 	app->chat.context = chats->selected;
       }
-      else
+      else if (chats->line_selected == count - 3)
 	chats->open_dialog.window = &(chats->window);
+      else if (chats->line_selected == count - 1)
+	chats->enter_dialog.window = &(chats->window);
       break;
     }
     default:
@@ -236,6 +243,11 @@ chats_print(UI_CHATS_Handle *chats,
   if (chats->open_dialog.window)
   {
     chat_open_dialog_print(&(chats->open_dialog), app);
+    return;
+  }
+  else if (chats->enter_dialog.window)
+  {
+    lobby_enter_dialog_print(&(chats->enter_dialog), app);
     return;
   }
 

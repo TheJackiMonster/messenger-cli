@@ -19,10 +19,10 @@
  */
 /*
  * @author Tobias Frisch
- * @file ui/chat_open_dialog.c
+ * @file ui/lobby_enter_dialog.c
  */
 
-#include "chat_open_dialog.h"
+#include "lobby_enter_dialog.h"
 
 #include <gnunet/platform.h>
 #include <gnunet/gnunet_chat_lib.h>
@@ -33,45 +33,71 @@
 #include "../util.h"
 
 void
-chat_open_dialog_event(UI_CHAT_OPEN_DIALOG_Handle *open_dialog,
-		       struct MESSENGER_Application *app,
-		       int key)
+lobby_enter_dialog_event(UI_LOBBY_ENTER_DIALOG_Handle *enter_dialog,
+		         struct MESSENGER_Application *app,
+		         int key)
 {
+  struct GNUNET_CHAT_Uri *uri;
+
   switch (key)
   {
     case 27:
     case KEY_EXIT:
-      open_dialog->window = NULL;
+      if (enter_dialog->error)
+	GNUNET_free(enter_dialog->error);
+
+      enter_dialog->error = NULL;
+      enter_dialog->window = NULL;
       break;
     case '\n':
     case KEY_ENTER:
-      if (open_dialog->topic_len > 0)
-	GNUNET_CHAT_group_create(app->chat.handle, open_dialog->topic);
+      if (enter_dialog->uri_len > 0)
+      {
+	if (enter_dialog->error)
+	  GNUNET_free(enter_dialog->error);
 
-      open_dialog->topic_len = 0;
-      open_dialog->window = NULL;
+	enter_dialog->error = NULL;
+	uri = GNUNET_CHAT_uri_parse(enter_dialog->uri, &(enter_dialog->error));
+
+	if (uri)
+	{
+	  GNUNET_CHAT_lobby_join(app->chat.handle, uri);
+	  GNUNET_CHAT_uri_destroy(uri);
+
+	  enter_dialog->uri_len = 0;
+	  enter_dialog->window = NULL;
+	}
+      }
+
       break;
     default:
       break;
   }
 
-  text_input_event(open_dialog->topic, key);
+  text_input_event(enter_dialog->uri, key);
 }
 
 void
-chat_open_dialog_print(UI_CHAT_OPEN_DIALOG_Handle *open_dialog,
-		       UNUSED struct MESSENGER_Application *app)
+lobby_enter_dialog_print(UI_LOBBY_ENTER_DIALOG_Handle *enter_dialog,
+			 UNUSED struct MESSENGER_Application *app)
 {
-  if (!(open_dialog->window))
+  if (!(enter_dialog->window))
     return;
 
-  WINDOW *window = *(open_dialog->window);
+  WINDOW *window = *(enter_dialog->window);
 
   werase(window);
   wmove(window, 0, 0);
 
-  wprintw(window, "%s", open_dialog->topic);
-  wmove(window, 0, open_dialog->topic_pos);
+  wprintw(window, "%s", enter_dialog->uri);
+
+  if (enter_dialog->error)
+  {
+    wmove(window, 1, 0);
+    wprintw(window, "ERROR: %s", enter_dialog->error);
+  }
+
+  wmove(window, 0, enter_dialog->uri_pos);
 
   wcursyncup(window);
   curs_set(1);

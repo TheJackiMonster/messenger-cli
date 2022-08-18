@@ -24,6 +24,7 @@
 
 #include "messages.h"
 
+#include "text_input.h"
 #include "../application.h"
 #include "../util.h"
 
@@ -38,8 +39,6 @@ _messages_iterate(UI_MESSAGES_Handle *messages,
   if (selected)
     messages->selected = message;
 }
-
-
 
 void
 _messages_handle_message(UI_MESSAGES_Handle *messages)
@@ -94,38 +93,19 @@ messages_event(UI_MESSAGES_Handle *messages,
   {
     case 27:
     case KEY_EXIT:
-    {
       app->chat.context = NULL;
       break;
-    }
-    case KEY_LEFT:
-    {
-      messages->text_pos--;
-      break;
-    }
-    case KEY_RIGHT:
-    {
-      messages->text_pos++;
-      break;
-    }
     case KEY_UP:
-    {
       messages->line_selected--;
       break;
-    }
     case KEY_DOWN:
-    {
       messages->line_selected++;
       break;
-    }
     case '\t':
-    {
       app->chat.show_members = TRUE;
       break;
-    }
     case '\n':
     case KEY_ENTER:
-    {
       if (messages->selected)
 	_messages_handle_message(messages);
       else if (messages->text_len > 0)
@@ -134,55 +114,19 @@ messages_event(UI_MESSAGES_Handle *messages,
 	messages->text_len = 0;
       }
       break;
-    }
     case KEY_BACKSPACE:
-    {
       if (messages->selected)
-      {
 	GNUNET_CHAT_message_delete(
 	    messages->selected,
 	    GNUNET_TIME_relative_get_zero_()
 	);
-	break;
-      }
-
-      if ((messages->text_pos < messages->text_len) &&
-	  (messages->text_pos > 0))
-	for (int i = messages->text_pos; i < messages->text_len; i++)
-	  messages->text[i - 1] = messages->text[i];
-
-      if ((messages->text_pos > 0) && (messages->text_len > 0))
-      {
-	messages->text_pos--;
-	messages->text_len--;
-      }
-
       break;
-    }
     default:
-    {
-      if ((messages->selected) || (!isprint(key)))
-	break;
-
-      for (int i = messages->text_len - 1; i >= messages->text_pos; i--)
-	messages->text[i + 1] = messages->text[i];
-
-      messages->text[messages->text_pos++] = (char) key;
-      messages->text_len++;
       break;
-    }
   }
 
-  if (messages->text_len >= TEXT_LEN_MAX)
-    messages->text_len = TEXT_LEN_MAX - 1;
-
-  messages->text[messages->text_len] = '\0';
-
-  if (messages->text_pos < 0)
-    messages->text_pos = 0;
-
-  if (messages->text_pos > messages->text_len)
-    messages->text_pos = messages->text_len;
+  if (!(messages->selected))
+    text_input_event(messages->text, key);
 
   if (messages->line_selected < 0)
     messages->line_selected = 0;
