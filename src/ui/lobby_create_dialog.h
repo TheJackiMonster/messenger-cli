@@ -28,13 +28,25 @@
 #include <stdlib.h>
 #include <curses.h>
 
+#include <gnunet/platform.h>
+#include <gnunet/gnunet_chat_lib.h>
+#include <gnunet/gnunet_util_lib.h>
+
 struct MESSENGER_Application;
 
 typedef struct UI_LOBBY_CREATE_DIALOG_Handle
 {
-  WINDOW **window;
+  WINDOW *window;
+  WINDOW **win;
 
-  // TODO
+  int line_index;
+  int line_offset;
+  int line_selected;
+
+  uint64_t selected;
+
+  struct GNUNET_CHAT_Lobby *lobby;
+  char *uri;
 } UI_LOBBY_CREATE_DIALOG_Handle;
 
 void

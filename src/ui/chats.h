@@ -33,7 +33,7 @@
 #include <gnunet/gnunet_util_lib.h>
 
 #include "chat_open_dialog.h"
-
+#include "lobby_create_dialog.h"
 #include "lobby_enter_dialog.h"
 
 struct MESSENGER_Application;
@@ -49,7 +49,7 @@ typedef struct UI_CHATS_Handle
   struct GNUNET_CHAT_Context *selected;
 
   UI_CHAT_OPEN_DIALOG_Handle open_dialog;
-
+  UI_LOBBY_CREATE_DIALOG_Handle create_dialog;
   UI_LOBBY_ENTER_DIALOG_Handle enter_dialog;
 } UI_CHATS_Handle;
 

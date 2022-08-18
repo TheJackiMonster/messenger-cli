@@ -30,7 +30,7 @@
 
 #define list_input_reset(list) { \
   (list)->line_index = 0;       \
-  (list)->selected = NULL;      \
+  (list)->selected = 0;         \
 }
 
 #define list_input_select(list, line_width, item) {              \

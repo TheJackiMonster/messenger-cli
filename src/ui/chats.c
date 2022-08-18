@@ -68,6 +68,11 @@ chats_event(UI_CHATS_Handle *chats,
     chat_open_dialog_event(&(chats->open_dialog), app, key);
     return;
   }
+  else if (chats->create_dialog.win)
+  {
+    lobby_create_dialog_event(&(chats->create_dialog), app, key);
+    return;
+  }
   else if (chats->enter_dialog.window)
   {
     lobby_enter_dialog_event(&(chats->enter_dialog), app, key);
@@ -124,6 +129,8 @@ chats_event(UI_CHATS_Handle *chats,
       }
       else if (chats->line_selected == count - 3)
 	chats->open_dialog.window = &(chats->window);
+      else if (chats->line_selected == count - 2)
+      	chats->create_dialog.win = &(chats->window);
       else if (chats->line_selected == count - 1)
 	chats->enter_dialog.window = &(chats->window);
       break;
@@ -185,6 +192,11 @@ chats_print(UI_CHATS_Handle *chats,
   if (chats->open_dialog.window)
   {
     chat_open_dialog_print(&(chats->open_dialog), app);
+    return;
+  }
+  else if (chats->create_dialog.win)
+  {
+    lobby_create_dialog_print(&(chats->create_dialog), app);
     return;
   }
   else if (chats->enter_dialog.window)

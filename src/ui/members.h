@@ -25,6 +25,7 @@
 #ifndef UI_MEMBERS_H_
 #define UI_MEMBERS_H_
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <curses.h>
 
