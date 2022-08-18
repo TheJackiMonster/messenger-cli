@@ -24,6 +24,7 @@
 
 #include "chats.h"
 
+#include "list_input.h"
 #include "../application.h"
 #include "../util.h"
 
@@ -33,14 +34,7 @@ _chats_iterate_group(void *cls,
 		     struct GNUNET_CHAT_Group *group)
 {
   UI_CHATS_Handle *chats = cls;
-
-  const bool selected = (chats->line_selected == chats->line_index);
-
-  chats->line_index++;
-
-  if (selected)
-    chats->selected = GNUNET_CHAT_group_get_context(group);
-
+  list_input_select(chats, 1, GNUNET_CHAT_group_get_context(group));
   return GNUNET_YES;
 }
 
@@ -50,14 +44,7 @@ _chats_iterate_contact(void *cls,
 		       struct GNUNET_CHAT_Contact *contact)
 {
   UI_CHATS_Handle *chats = cls;
-
-  const bool selected = (chats->line_selected == chats->line_index);
-
-  chats->line_index++;
-
-  if (selected)
-    chats->selected = GNUNET_CHAT_contact_get_context(contact);
-
+  list_input_select(chats, 1, GNUNET_CHAT_contact_get_context(contact));
   return GNUNET_YES;
 }
 
@@ -87,44 +74,34 @@ chats_event(UI_CHATS_Handle *chats,
     return;
   }
 
-  chats->line_index = 0;
-  chats->selected = NULL;
+  list_input_reset(chats);
 
-  int count = 3;
-
-  count += GNUNET_CHAT_iterate_groups(
+  GNUNET_CHAT_iterate_groups(
       app->chat.handle,
       &_chats_iterate_group,
       chats
   );
 
-  count += GNUNET_CHAT_iterate_contacts(
+  GNUNET_CHAT_iterate_contacts(
       app->chat.handle,
       &_chats_iterate_contact,
       chats
   );
 
+  list_input_select(chats, 1, NULL);
+  list_input_select(chats, 1, NULL);
+  list_input_select(chats, 1, NULL);
+
+  const int count = chats->line_index;
+
   switch (key)
   {
     case 27:
     case KEY_EXIT:
-    {
       GNUNET_CHAT_disconnect(app->chat.handle);
       break;
-    }
-    case KEY_UP:
-    {
-      chats->line_selected--;
-      break;
-    }
-    case KEY_DOWN:
-    {
-      chats->line_selected++;
-      break;
-    }
     case '\n':
     case KEY_ENTER:
-    {
       if (chats->selected)
       {
 	GNUNET_CHAT_context_request(chats->selected);
@@ -150,31 +127,11 @@ chats_event(UI_CHATS_Handle *chats,
       else if (chats->line_selected == count - 1)
 	chats->enter_dialog.window = &(chats->window);
       break;
-    }
     default:
       break;
   }
 
-  if (chats->line_selected < 0)
-    chats->line_selected = 0;
-  else if (chats->line_selected >= count)
-    chats->line_selected = count - 1;
-
-  if (!(chats->window))
-    return;
-
-  const int height = getmaxy(chats->window);
-  const int y = chats->line_selected - chats->line_offset;
-
-  if (y < 0)
-    chats->line_offset += y;
-  else if (y + 1 >= height)
-    chats->line_offset += y + 1 - height;
-
-  if (chats->line_offset < 0)
-    chats->line_offset = 0;
-  else if (chats->line_offset >= count)
-    chats->line_offset = count - 1;
+  list_input_event(chats, key);
 }
 
 static int
@@ -183,18 +140,7 @@ _chats_print_entry(UI_CHATS_Handle *chats,
 		   char chat_type,
 		   const char *text)
 {
-  const bool selected = (chats->line_selected == chats->line_index);
-  const int y = chats->line_index - chats->line_offset;
-
-  chats->line_index++;
-
-  if (y < 0)
-    return GNUNET_YES;
-
-  const int height = getmaxy(chats->window);
-
-  if (y >= height)
-    return GNUNET_NO;
+  list_input_print_gnunet(chats, 1);
 
   const int attrs_select = A_BOLD;
 
@@ -218,9 +164,7 @@ _chats_iterate_print_group(void *cls,
 			   struct GNUNET_CHAT_Group *group)
 {
   UI_CHATS_Handle *chats = cls;
-
   const char *name = GNUNET_CHAT_group_get_name(group);
-
   return _chats_print_entry(chats, 'x', 'G', name);
 }
 
@@ -230,9 +174,7 @@ _chats_iterate_print_contact(void *cls,
 			     struct GNUNET_CHAT_Contact *contact)
 {
   UI_CHATS_Handle *chats = cls;
-
   const char *name = GNUNET_CHAT_contact_get_name(contact);
-
   return _chats_print_entry(chats, 'x', 'C', name);
 }
 
@@ -254,7 +196,7 @@ chats_print(UI_CHATS_Handle *chats,
   if (!(chats->window))
     return;
 
-  chats->line_index = 0;
+  list_input_reset(chats);
   werase(chats->window);
 
   GNUNET_CHAT_iterate_groups(

@@ -24,6 +24,7 @@
 
 #include "accounts.h"
 
+#include "list_input.h"
 #include "../application.h"
 #include "../util.h"
 
@@ -33,14 +34,7 @@ _accounts_iterate(void *cls,
                   struct GNUNET_CHAT_Account *account)
 {
   UI_ACCOUNTS_Handle *accounts = cls;
-
-  const bool selected = (accounts->line_selected == accounts->line_index);
-
-  accounts->line_index++;
-
-  if (selected)
-    accounts->selected = account;
-
+  list_input_select(accounts, 1, account);
   return GNUNET_YES;
 }
 
@@ -55,66 +49,34 @@ accounts_event(UI_ACCOUNTS_Handle *accounts,
     return;
   }
 
-  accounts->line_index = 0;
-  accounts->selected = NULL;
+  list_input_reset(accounts);
 
-  int count = GNUNET_CHAT_iterate_accounts(
+  GNUNET_CHAT_iterate_accounts(
     app->chat.handle,
     &_accounts_iterate,
     accounts
-  ) + 1;
+  );
+
+  list_input_select(accounts, 1, NULL);
 
   switch (key)
   {
     case 27:
     case KEY_EXIT:
-    {
       app->chat.quit = TRUE;
       break;
-    }
-    case KEY_UP:
-    {
-      accounts->line_selected--;
-      break;
-    }
-    case KEY_DOWN:
-    {
-      accounts->line_selected++;
-      break;
-    }
     case '\n':
     case KEY_ENTER:
-    {
       if (accounts->selected)
 	GNUNET_CHAT_connect(app->chat.handle, accounts->selected);
       else
 	accounts->create_dialog.window = &(accounts->window);
       break;
-    }
     default:
       break;
   }
 
-  if (accounts->line_selected < 0)
-    accounts->line_selected = 0;
-  else if (accounts->line_selected >= count)
-    accounts->line_selected = count - 1;
-
-  if (!(accounts->window))
-    return;
-
-  const int height = getmaxy(accounts->window);
-  const int y = accounts->line_selected - accounts->line_offset;
-
-  if (y < 0)
-    accounts->line_offset += y;
-  else if (y + 1 >= height)
-    accounts->line_offset += y + 1 - height;
-
-  if (accounts->line_offset < 0)
-    accounts->line_offset = 0;
-  else if (accounts->line_offset >= count)
-    accounts->line_offset = count - 1;
+  list_input_event(accounts, key);
 }
 
 static int
@@ -122,18 +84,7 @@ _accounts_print_entry(UI_ACCOUNTS_Handle *accounts,
 		      char type,
 		      const char *text)
 {
-  const bool selected = (accounts->line_selected == accounts->line_index);
-  const int y = accounts->line_index - accounts->line_offset;
-
-  accounts->line_index++;
-
-  if (y < 0)
-    return GNUNET_YES;
-
-  const int height = getmaxy(accounts->window);
-
-  if (y >= height)
-    return GNUNET_NO;
+  list_input_print_gnunet(accounts, 1);
 
   const int attrs_select = A_BOLD;
 
@@ -153,9 +104,7 @@ _accounts_iterate_print(void *cls,
                         struct GNUNET_CHAT_Account *account)
 {
   UI_ACCOUNTS_Handle *accounts = cls;
-
   const char *name = GNUNET_CHAT_account_get_name(account);
-
   return _accounts_print_entry(accounts, 'x', name);
 }
 
@@ -172,7 +121,7 @@ accounts_print(UI_ACCOUNTS_Handle *accounts,
   if (!(accounts->window))
     return;
 
-  accounts->line_index = 0;
+  list_input_reset(accounts);
   werase(accounts->window);
 
   GNUNET_CHAT_iterate_accounts(

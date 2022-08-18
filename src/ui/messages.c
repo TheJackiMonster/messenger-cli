@@ -24,21 +24,10 @@
 
 #include "messages.h"
 
+#include "list_input.h"
 #include "text_input.h"
 #include "../application.h"
 #include "../util.h"
-
-void
-_messages_iterate(UI_MESSAGES_Handle *messages,
-		  const struct GNUNET_CHAT_Message *message)
-{
-  const bool selected = (messages->line_selected == messages->line_index);
-
-  messages->line_index++;
-
-  if (selected)
-    messages->selected = message;
-}
 
 void
 _messages_handle_message(UI_MESSAGES_Handle *messages)
@@ -75,31 +64,22 @@ messages_event(UI_MESSAGES_Handle *messages,
 	       MESSENGER_Application *app,
 	       int key)
 {
-  messages->line_index = 0;
-  messages->selected = NULL;
-
-  int count = 1;
+  list_input_reset(messages);
 
   UI_MESSAGES_List *element = messages->head;
   while (element)
   {
-    _messages_iterate(messages, element->message);
-    count++;
-
+    list_input_select(messages, 1, element->message);
     element = element->next;
   }
+
+  list_input_select(messages, 1, NULL);
 
   switch (key)
   {
     case 27:
     case KEY_EXIT:
       app->chat.context = NULL;
-      break;
-    case KEY_UP:
-      messages->line_selected--;
-      break;
-    case KEY_DOWN:
-      messages->line_selected++;
       break;
     case '\t':
       app->chat.show_members = TRUE;
@@ -128,28 +108,7 @@ messages_event(UI_MESSAGES_Handle *messages,
   if (!(messages->selected))
     text_input_event(messages->text, key);
 
-  if (messages->line_selected < 0)
-    messages->line_selected = 0;
-  else if (messages->line_selected >= count)
-    messages->line_selected = count - 1;
-
-  if (!(messages->window))
-    return;
-
-  const int height = getmaxy(messages->window);
-  const int y = messages->line_selected - messages->line_offset;
-
-  const int line_height = height - 2;
-
-  if (y < 0)
-    messages->line_offset += y;
-  else if (y + 1 >= line_height)
-    messages->line_offset += y + 1 - line_height;
-
-  if (messages->line_offset < 0)
-    messages->line_offset = 0;
-  else if (messages->line_offset >= count)
-    messages->line_offset = count - 1;
+  list_input_event(messages, key);
 }
 
 void
@@ -158,19 +117,7 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
 {
   enum GNUNET_CHAT_MessageKind kind = GNUNET_CHAT_message_get_kind(message);
 
-  const bool selected = (messages->line_selected == messages->line_index);
-  const int y = messages->line_index - messages->line_offset;
-
-  messages->line_index++;
-
-  if (y < 0)
-    return;
-
-  const int height = getmaxy(messages->window);
-  const int line_height = height - 2;
-
-  if (y >= line_height)
-    return;
+  list_input_print(messages, 1);
 
   struct GNUNET_CHAT_Contact *sender = GNUNET_CHAT_message_get_sender(message);
 
@@ -270,20 +217,17 @@ messages_print(UI_MESSAGES_Handle *messages)
   if (!(messages->window))
     return;
 
-  messages->line_index = 0;
+  list_input_reset(messages);
   werase(messages->window);
-
-  int count = 0;
 
   UI_MESSAGES_List *element = messages->head;
   while (element)
   {
     _messages_iterate_print(messages, element->message);
-    count++;
-
     element = element->next;
   }
 
+  const int count = messages->line_index;
   const bool selected = (count == messages->line_selected);
 
   const int width = getmaxx(messages->window);

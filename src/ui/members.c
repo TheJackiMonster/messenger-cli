@@ -24,6 +24,7 @@
 
 #include "members.h"
 
+#include "list_input.h"
 #include "../application.h"
 #include "../util.h"
 
@@ -32,16 +33,12 @@ members_event(UI_MEMBERS_Handle *members,
 	      struct MESSENGER_Application *app,
 	      int key)
 {
-  members->line_index = 0;
-  members->selected = NULL;
-
-  int count = 0;
+  list_input_reset(members);
 
   UI_MEMBERS_List *element = members->head;
   while (element)
   {
-    count++;
-
+    list_input_select(members, 1, element->contact);
     element = element->next;
   }
 
@@ -50,72 +47,28 @@ members_event(UI_MEMBERS_Handle *members,
     case 27:
     case KEY_EXIT:
     case '\t':
-    {
       app->chat.show_members = FALSE;
       break;
-    }
-    case KEY_UP:
-    {
-      members->line_selected--;
-      break;
-    }
-    case KEY_DOWN:
-    {
-      members->line_selected++;
-      break;
-    }
     case '\n':
     case KEY_ENTER:
-    {
       if (members->selected)
       {
 	// TODO
       }
 
       break;
-    }
     default:
       break;
   }
 
-  if (members->line_selected < 0)
-    members->line_selected = 0;
-  else if (members->line_selected >= count)
-    members->line_selected = count - 1;
-
-  if (!(members->window))
-    return;
-
-  const int height = getmaxy(members->window);
-  const int y = members->line_selected - members->line_offset;
-
-  if (y < 0)
-    members->line_offset += y;
-  else if (y + 1 >= height)
-    members->line_offset += y + 1 - height;
-
-  if (members->line_offset < 0)
-    members->line_offset = 0;
-  else if (members->line_offset >= count)
-    members->line_offset = count - 1;
+  list_input_event(members, key);
 }
 
 static void
 _members_iterate_print(UI_MEMBERS_Handle *members,
 		       const struct GNUNET_CHAT_Contact *contact)
 {
-  const bool selected = (members->line_selected == members->line_index);
-  const int y = members->line_index - members->line_offset;
-
-  members->line_index++;
-
-  if (y < 0)
-    return;
-
-  const int height = getmaxy(members->window);
-
-  if (y >= height)
-    return;
+  list_input_print(members, 1);
 
   const int attrs_select = A_BOLD;
 
@@ -142,14 +95,13 @@ members_print(UI_MEMBERS_Handle *members)
   if (!(members->window))
     return;
 
-  members->line_index = 0;
+  list_input_reset(members);
   werase(members->window);
 
   UI_MEMBERS_List *element = members->head;
   while (element)
   {
     _members_iterate_print(members, element->contact);
-
     element = element->next;
   }
 }
