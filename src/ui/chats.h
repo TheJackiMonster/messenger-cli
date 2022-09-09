@@ -42,6 +42,9 @@ typedef struct UI_CHATS_Handle
 {
   WINDOW *window;
 
+  int line_prev;
+  int line_next;
+
   int line_index;
   int line_offset;
   int line_selected;

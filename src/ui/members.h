@@ -50,6 +50,9 @@ typedef struct UI_MEMBERS_Handle
   UI_MEMBERS_List *head;
   UI_MEMBERS_List *tail;
 
+  int line_prev;
+  int line_next;
+
   int line_index;
   int line_offset;
   int line_selected;

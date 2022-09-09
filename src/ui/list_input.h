@@ -29,80 +29,87 @@
 #include <stdlib.h>
 
 #define list_input_reset(list) { \
-  (list)->line_index = 0;       \
-  (list)->selected = 0;         \
+  (list)->line_prev = 0;         \
+  (list)->line_next = 0;         \
+  (list)->line_index = 0;        \
+  (list)->selected = 0;          \
 }
 
-#define list_input_select(list, line_width, item) {              \
-  const bool selected = (                                       \
-      ((list)->line_selected >= (list)->line_index) &&          \
-      ((list)->line_selected < (list)->line_index + line_width) \
-  );                                                            \
-                                                                \
-  (list)->line_index += line_width;                             \
-                                                                \
-  if (selected)                                                 \
-    (list)->selected = item;                                    \
+#define list_input_select(list, line_width, item) {                \
+  const bool selected = (                                          \
+      ((list)->line_selected >= (list)->line_index) &&             \
+      ((list)->line_selected < (list)->line_index + (line_width))  \
+  );                                                               \
+                                                                   \
+  if ((!selected) && ((list)->line_selected > (list)->line_index)) \
+    (list)->line_prev = (list)->line_index;                        \
+                                                                   \
+  (list)->line_index += (line_width);                              \
+                                                                   \
+  if (selected) {                                                  \
+    (list)->line_next = (list)->line_index;                        \
+    (list)->selected = item;                                       \
+  }                                                                \
 }
 
 #define list_input_event(list, key) {                          \
-  int count = (list)->line_index;                             \
-                                                              \
-  switch (key)                                                \
-  {                                                           \
-    case KEY_UP:                                              \
-    {                                                         \
-      (list)->line_selected--;                                \
-      break;                                                  \
-    }                                                         \
-    case KEY_DOWN:                                            \
-    {                                                         \
-      (list)->line_selected++;                                \
-      break;                                                  \
-    }                                                         \
-    default:                                                  \
-      break;                                                  \
-  }                                                           \
-                                                              \
-  if ((list)->line_selected < 0)                              \
-    (list)->line_selected = 0;                                \
-  else if ((list)->line_selected >= count)                    \
-    (list)->line_selected = count - 1;                        \
-                                                              \
-  if ((list)->window)                                         \
-  {                                                           \
-    const int height = getmaxy((list)->window);               \
+  int count = (list)->line_index;                              \
+                                                               \
+  switch (key)                                                 \
+  {                                                            \
+    case KEY_UP:                                               \
+    {                                                          \
+      (list)->line_selected = (list)->line_prev;               \
+      break;                                                   \
+    }                                                          \
+    case KEY_DOWN:                                             \
+    {                                                          \
+      (list)->line_selected = (list)->line_next;               \
+      break;                                                   \
+    }                                                          \
+    default:                                                   \
+      break;                                                   \
+  }                                                            \
+                                                               \
+  if ((list)->line_selected < 0)                               \
+    (list)->line_selected = 0;                                 \
+  else if ((list)->line_selected >= count)                     \
+    (list)->line_selected = count - 1;                         \
+                                                               \
+  if ((list)->window)                                          \
+  {                                                            \
+    const int height = getmaxy((list)->window);                \
     const int y = (list)->line_selected - (list)->line_offset; \
-                                                              \
-    if (y < 0)                                                \
+                                                               \
+    if (y < 0)                                                 \
       (list)->line_offset += y;                                \
-    else if (y + 1 >= height)                                 \
+    else if (y + 1 >= height)                                  \
       (list)->line_offset += y + 1 - height;                   \
-                                                              \
+                                                               \
     if ((list)->line_offset < 0)                               \
       (list)->line_offset = 0;                                 \
     else if ((list)->line_offset >= count)                     \
       (list)->line_offset = count - 1;                         \
-  }                                                           \
+  }                                                            \
 }
 
-#define list_input_print_(list, line_width, yes_res, no_res)     \
-  const bool selected = (                                       \
-      ((list)->line_selected >= (list)->line_index) &&          \
-      ((list)->line_selected < (list)->line_index + line_width) \
-  );                                                            \
-                                                                \
-  const int y = (list)->line_index - (list)->line_offset; {      \
-                                                                \
-  (list)->line_index += line_width;                             \
-                                                                \
-  if (y + line_width < 1)                                       \
-    return yes_res;                                             \
-                                                                \
-  const int height = getmaxy((list)->window);                   \
-                                                                \
-  if (y >= height)                                              \
-    return no_res;                                              \
+#define list_input_print_(list, line_width, yes_res, no_res)      \
+  const bool selected = (                                         \
+      ((list)->line_selected >= (list)->line_index) &&            \
+      ((list)->line_selected < (list)->line_index + (line_width)) \
+  );                                                              \
+                                                                  \
+  const int y = (list)->line_index - (list)->line_offset; {       \
+                                                                  \
+  (list)->line_index += (line_width);                             \
+                                                                  \
+  if (y + (line_width) < 1)                                       \
+    return yes_res;                                               \
+                                                                  \
+  const int height = getmaxy((list)->window);                     \
+                                                                  \
+  if (y >= height)                                                \
+    return no_res;                                                \
 }
 
 #define list_input_print_gnunet(list, line_width) \

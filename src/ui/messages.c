@@ -29,6 +29,26 @@
 #include "../application.h"
 #include "../util.h"
 
+struct tm*
+_messages_new_day(time_t* current_time,
+		  const time_t* timestamp)
+{
+  struct tm* ts = localtime(timestamp);
+
+  ts->tm_sec = 0;
+  ts->tm_min = 0;
+  ts->tm_hour = 0;
+
+  const time_t date_time = timelocal(ts);
+
+  if (date_time <= *current_time) {
+    return NULL;
+  }
+
+  *current_time = date_time;
+  return ts;
+}
+
 void
 _messages_handle_message(UI_MESSAGES_Handle *messages)
 {
@@ -65,11 +85,17 @@ messages_event(UI_MESSAGES_Handle *messages,
 	       int key)
 {
   list_input_reset(messages);
+  messages->line_time = 0;
 
   UI_MESSAGES_List *element = messages->head;
   while (element)
   {
-    list_input_select(messages, 1, element->message);
+    struct tm *ts = _messages_new_day(
+	&(messages->line_time),
+	&(element->timestamp)
+    );
+
+    list_input_select(messages, ts? 2 : 1, element->message);
     element = element->next;
   }
 
@@ -113,11 +139,10 @@ messages_event(UI_MESSAGES_Handle *messages,
 
 void
 _messages_iterate_print(UI_MESSAGES_Handle *messages,
+			const time_t* timestamp,
 			const struct GNUNET_CHAT_Message *message)
 {
   enum GNUNET_CHAT_MessageKind kind = GNUNET_CHAT_message_get_kind(message);
-
-  list_input_print(messages, 1);
 
   struct GNUNET_CHAT_Contact *sender = GNUNET_CHAT_message_get_sender(message);
 
@@ -126,29 +151,35 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
 
   const struct GNUNET_CHAT_File *file = GNUNET_CHAT_message_get_file(message);
 
-  struct GNUNET_TIME_Absolute abs_time = GNUNET_CHAT_message_get_timestamp(
-      message
-  );
-
-  struct GNUNET_TIME_Timestamp timestamp = GNUNET_TIME_absolute_to_timestamp(
-      abs_time
-  );
-
-  const time_t s_after_epoch = (
-      GNUNET_TIME_timestamp_to_s(timestamp)
-  );
-
-  struct tm* ts = localtime(&s_after_epoch);
+  struct tm* ts = localtime(timestamp);
   char time_buf [255];
 
   strftime(time_buf, sizeof(time_buf), "%H:%M", ts);
+
+  ts = _messages_new_day(&(messages->line_time), timestamp);
+
+  list_input_print(messages, ts? 2 : 1);
+  wmove(messages->window, y, 0);
+
+  if (ts) {
+    char date_buf [255];
+
+    strftime(date_buf, sizeof(date_buf), "%x", ts);
+
+    const int width = getmaxx(messages->window);
+
+    whline(messages->window, '-', width);
+    wmove(messages->window, y, 8);
+
+    wprintw(messages->window, " %s ", date_buf);
+    wmove(messages->window, y+1, 0);
+  }
 
   const int attrs_select = A_BOLD;
 
   if (selected) wattron(messages->window, attrs_select);
 
-  wmove(messages->window, y, 0);
-  wprintw(messages->window, "%s | ", time_buf);
+  wprintw(messages->window, " %s | ", time_buf);
 
   switch (kind) {
     case GNUNET_CHAT_KIND_JOIN:
@@ -207,7 +238,6 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
       break;
   }
 
-
   if (selected) wattroff(messages->window, attrs_select);
 }
 
@@ -218,12 +248,14 @@ messages_print(UI_MESSAGES_Handle *messages)
     return;
 
   list_input_reset(messages);
+  messages->line_time = 0;
+
   werase(messages->window);
 
   UI_MESSAGES_List *element = messages->head;
   while (element)
   {
-    _messages_iterate_print(messages, element->message);
+    _messages_iterate_print(messages, &(element->timestamp), element->message);
     element = element->next;
   }
 
@@ -278,17 +310,12 @@ _message_compare_timestamps(UNUSED void *cls,
 			    UI_MESSAGES_List *list0,
 			    UI_MESSAGES_List *list1)
 {
-  struct GNUNET_TIME_Absolute time0, time1;
-
   if ((!list0) || (!list1))
     return 0;
 
-  time0 = GNUNET_CHAT_message_get_timestamp(list0->message);
-  time1 = GNUNET_CHAT_message_get_timestamp(list1->message);
-
-  if (GNUNET_TIME_absolute_cmp(time0, >, time1))
+  if (list0->timestamp > list1->timestamp)
     return -1;
-  else if (GNUNET_TIME_absolute_cmp(time0, <, time1))
+  else if (list0->timestamp < list1->timestamp)
     return +1;
   else
     return 0;
@@ -309,19 +336,33 @@ messages_add(UI_MESSAGES_Handle *messages,
       break;
   }
 
-  const int height = getmaxy(messages->window);
-  const int line_height = height - 2;
-
-  int count = 0;
+  list_input_reset(messages);
+  messages->line_time = 0;
 
   UI_MESSAGES_List *element = messages->head;
   while (element)
   {
-    count++;
+    struct tm *ts = _messages_new_day(
+      &(messages->line_time),
+      &(element->timestamp)
+    );
+
+    list_input_select(messages, ts? 2 : 1, element->message);
     element = element->next;
   }
 
+  list_input_select(messages, 1, NULL);
+
+  const struct GNUNET_TIME_Absolute abs_time = (
+      GNUNET_CHAT_message_get_timestamp(message)
+  );
+
+  const struct GNUNET_TIME_Timestamp timestamp = (
+      GNUNET_TIME_absolute_to_timestamp(abs_time)
+  );
+
   element = GNUNET_new(UI_MESSAGES_List);
+  element->timestamp = GNUNET_TIME_timestamp_to_s(timestamp);
   element->message = message;
 
   GNUNET_CONTAINER_DLL_insert_sorted(
@@ -333,11 +374,10 @@ messages_add(UI_MESSAGES_Handle *messages,
     element
   );
 
-  if (messages->line_selected >= count)
-    messages->line_selected = count + 1;
+  list_input_select(messages, 1, NULL);
 
-  if ((line_height > 0) && (messages->line_offset + line_height >= count))
-    messages->line_offset = count + 1 - line_height;
+  if (!(messages->selected))
+    list_input_event(messages, KEY_DOWN);
 }
 
 void

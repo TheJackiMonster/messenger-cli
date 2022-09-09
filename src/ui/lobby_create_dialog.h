@@ -39,6 +39,9 @@ typedef struct UI_LOBBY_CREATE_DIALOG_Handle
   WINDOW *window;
   WINDOW **win;
 
+  int line_prev;
+  int line_next;
+
   int line_index;
   int line_offset;
   int line_selected;

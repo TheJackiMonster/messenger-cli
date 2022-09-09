@@ -36,6 +36,8 @@ struct MESSENGER_Application;
 
 typedef struct UI_MESSAGES_List
 {
+  time_t timestamp;
+
   const struct GNUNET_CHAT_Message *message;
 
   struct UI_MESSAGES_List *prev;
@@ -51,9 +53,13 @@ typedef struct UI_MESSAGES_Handle
   UI_MESSAGES_List *head;
   UI_MESSAGES_List *tail;
 
+  int line_prev;
+  int line_next;
+
   int line_index;
   int line_offset;
   int line_selected;
+  time_t line_time;
 
   const struct GNUNET_CHAT_Message *selected;
 
