@@ -8,3 +8,6 @@
 
 # Application file:
 messenger-cli
+
+# Tar files
+messenger-cli-*.tar.gz
