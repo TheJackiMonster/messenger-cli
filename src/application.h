@@ -35,6 +35,9 @@
 #include "ui/chat.h"
 #include "ui/chats.h"
 
+/**
+ * @struct MESSENGER_Application
+ */
 typedef struct MESSENGER_Application
 {
   char **argv;
@@ -58,20 +61,54 @@ typedef struct MESSENGER_Application
   UI_CHAT_Handle current;
 } MESSENGER_Application;
 
+/**
+ * Clears the application handle to reset all views
+ * which might have been in use.
+ *
+ * @param[out] app Application handle
+ */
 void
 application_clear(MESSENGER_Application *app);
 
+/**
+ * Initializes the application handle with the program
+ * arguments provided from the main function.
+ *
+ * @param[out] app Application handle
+ * @param[in] argc Argument count
+ * @param[in] argv Argument array
+ */
 void
 application_init(MESSENGER_Application *app,
 		 int argc,
 		 char **argv);
 
+/**
+ * Refreshes the application handle freeing all temporary
+ * WINDOW handles to manage the different views which
+ * were used.
+ *
+ * @param[out] app Application handle
+ */
 void
 application_refresh(MESSENGER_Application *app);
 
+/**
+ * Starts the main loop of the application which will
+ * be processed via GNUnet and its callback management.
+ *
+ * @param[in,out] app Application handle
+ */
 void
 application_run(MESSENGER_Application *app);
 
+/**
+ * Returns the status code by the given application
+ * at current state.
+ *
+ * @param[in] app Application handle
+ * @return #EXIT_FAILURE on failure, otherwise #EXIT_SUCCESS
+ */
 int
 application_status(MESSENGER_Application *app);
 

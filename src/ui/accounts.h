@@ -36,6 +36,9 @@
 
 struct MESSENGER_Application;
 
+/**
+ * @struct UI_ACCOUNTS_Handle
+ */
 typedef struct UI_ACCOUNTS_Handle
 {
   WINDOW *window;
@@ -55,11 +58,27 @@ typedef struct UI_ACCOUNTS_Handle
 #define UI_ACCOUNTS_ROWS_MIN 5
 #define UI_ACCOUNTS_COLS_MIN 30
 
+/**
+ * Processes the current key event by the view
+ * to show the list of chat accounts.
+ *
+ * @param[in,out] accounts Chat accounts view
+ * @param[in,out] app Application handle
+ * @param[in] key Key
+ */
 void
 accounts_event(UI_ACCOUNTS_Handle *accounts,
 	       struct MESSENGER_Application *app,
 	       int key);
 
+/**
+ * Prints the content of the view to show
+ * the list of chat accounts to its selected
+ * window view on screen.
+ *
+ * @param[in,out] accounts Chat accounts view
+ * @param[in] app Application handle
+ */
 void
 accounts_print(UI_ACCOUNTS_Handle *accounts,
 	       struct MESSENGER_Application *app);

@@ -30,6 +30,9 @@
 
 struct MESSENGER_Application;
 
+/**
+ * @struct UI_CHAT_OPEN_DIALOG_Handle
+ */
 typedef struct UI_CHAT_OPEN_DIALOG_Handle
 {
   WINDOW **window;
@@ -39,13 +42,26 @@ typedef struct UI_CHAT_OPEN_DIALOG_Handle
   int topic_pos;
 } UI_CHAT_OPEN_DIALOG_Handle;
 
+/**
+ * Processes the current key event by the dialog
+ * to open a chat.
+ *
+ * @param[in,out] open_dialog Chat opening dialog
+ * @param[in,out] app Application handle
+ * @param[in] key Key
+ */
 void
 chat_open_dialog_event(UI_CHAT_OPEN_DIALOG_Handle *open_dialog,
 		       struct MESSENGER_Application *app,
 		       int key);
 
+/**
+ * Prints the content of the dialog to open a
+ * chat to its selected window view.
+ *
+ * @param[in] open_dialog Chat opening dialog
+ */
 void
-chat_open_dialog_print(UI_CHAT_OPEN_DIALOG_Handle *open_dialog,
-		       struct MESSENGER_Application *app);
+chat_open_dialog_print(UI_CHAT_OPEN_DIALOG_Handle *open_dialog);
 
 #endif /* UI_CHAT_OPEN_DIALOG_H_ */

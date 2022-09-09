@@ -191,17 +191,17 @@ chats_print(UI_CHATS_Handle *chats,
 {
   if (chats->open_dialog.window)
   {
-    chat_open_dialog_print(&(chats->open_dialog), app);
+    chat_open_dialog_print(&(chats->open_dialog));
     return;
   }
   else if (chats->create_dialog.win)
   {
-    lobby_create_dialog_print(&(chats->create_dialog), app);
+    lobby_create_dialog_print(&(chats->create_dialog));
     return;
   }
   else if (chats->enter_dialog.window)
   {
-    lobby_enter_dialog_print(&(chats->enter_dialog), app);
+    lobby_enter_dialog_print(&(chats->enter_dialog));
     return;
   }
 

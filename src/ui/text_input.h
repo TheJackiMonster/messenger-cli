@@ -27,6 +27,10 @@
 
 #include <ctype.h>
 
+/**
+ * Handles the key event to move the cursor
+ * and adjust the content of text controls.
+ */
 #define text_input_event(text, key) {                     \
   switch (key)                                           \
   {                                                      \

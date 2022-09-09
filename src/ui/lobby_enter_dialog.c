@@ -78,8 +78,7 @@ lobby_enter_dialog_event(UI_LOBBY_ENTER_DIALOG_Handle *enter_dialog,
 }
 
 void
-lobby_enter_dialog_print(UI_LOBBY_ENTER_DIALOG_Handle *enter_dialog,
-			 UNUSED struct MESSENGER_Application *app)
+lobby_enter_dialog_print(UI_LOBBY_ENTER_DIALOG_Handle *enter_dialog)
 {
   if (!(enter_dialog->window))
     return;

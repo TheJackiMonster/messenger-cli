@@ -28,6 +28,9 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+/**
+ * Resets the list controls.
+ */
 #define list_input_reset(list) { \
   (list)->line_prev = 0;         \
   (list)->line_next = 0;         \
@@ -35,6 +38,10 @@
   (list)->selected = 0;          \
 }
 
+/**
+ * Handles the list controls selection and
+ * indices to move the selection via events.
+ */
 #define list_input_select(list, line_width, item) {                \
   const bool selected = (                                          \
       ((list)->line_selected >= (list)->line_index) &&             \
@@ -52,6 +59,10 @@
   }                                                                \
 }
 
+/**
+ * Handles the key event to move the selection
+ * of list controls and adjust its view area.
+ */
 #define list_input_event(list, key) {                          \
   int count = (list)->line_index;                              \
                                                                \
@@ -93,6 +104,11 @@
   }                                                            \
 }
 
+/**
+ * Prepares for printing an item in list controls
+ * as well as providing its selection and its
+ * y location in the current view.
+ */
 #define list_input_print_(list, line_width, yes_res, no_res)      \
   const bool selected = (                                         \
       ((list)->line_selected >= (list)->line_index) &&            \

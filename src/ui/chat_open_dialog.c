@@ -59,8 +59,7 @@ chat_open_dialog_event(UI_CHAT_OPEN_DIALOG_Handle *open_dialog,
 }
 
 void
-chat_open_dialog_print(UI_CHAT_OPEN_DIALOG_Handle *open_dialog,
-		       UNUSED struct MESSENGER_Application *app)
+chat_open_dialog_print(UI_CHAT_OPEN_DIALOG_Handle *open_dialog)
 {
   if (!(open_dialog->window))
     return;

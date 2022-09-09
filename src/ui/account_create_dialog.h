@@ -30,6 +30,9 @@
 
 struct MESSENGER_Application;
 
+/**
+ * @struct UI_ACCOUNT_CREATE_DIALOG_Handle
+ */
 typedef struct UI_ACCOUNT_CREATE_DIALOG_Handle
 {
   WINDOW **window;
@@ -39,13 +42,26 @@ typedef struct UI_ACCOUNT_CREATE_DIALOG_Handle
   int name_pos;
 } UI_ACCOUNT_CREATE_DIALOG_Handle;
 
+/**
+ * Processes the current key event by the dialog
+ * to create a new account.
+ *
+ * @param[in,out] create_dialog Account creation dialog
+ * @param[in,out] app Application handle
+ * @param[in] key Key
+ */
 void
 account_create_dialog_event(UI_ACCOUNT_CREATE_DIALOG_Handle *create_dialog,
 			    struct MESSENGER_Application *app,
 			    int key);
 
+/**
+ * Prints the content of the dialog to create a new
+ * account to its selected window view.
+ *
+ * @param[in] create_dialog Account creation dialog
+ */
 void
-account_create_dialog_print(UI_ACCOUNT_CREATE_DIALOG_Handle *create_dialog,
-			    struct MESSENGER_Application *app);
+account_create_dialog_print(UI_ACCOUNT_CREATE_DIALOG_Handle *create_dialog);
 
 #endif /* UI_ACCOUNT_CREATE_DIALOG_H_ */

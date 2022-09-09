@@ -34,6 +34,12 @@
 #define UTIL_LOGO_ROWS 10
 #define UTIL_LOGO_COLS 28
 
+/**
+ * Prints the main logo of the application
+ * onto a specified view.
+ *
+ * @param[in,out] window Window view
+ */
 void
 util_print_logo(WINDOW *window);
 

@@ -35,6 +35,9 @@
 
 struct MESSENGER_Application;
 
+/**
+ * @struct UI_MEMBERS_List
+ */
 typedef struct UI_MEMBERS_List
 {
   struct GNUNET_CHAT_Contact *contact;
@@ -43,6 +46,9 @@ typedef struct UI_MEMBERS_List
   struct UI_MEMBERS_List *next;
 } UI_MEMBERS_List;
 
+/**
+ * @struct UI_MEMBERS_Handle
+ */
 typedef struct UI_MEMBERS_Handle
 {
   WINDOW *window;
@@ -62,21 +68,59 @@ typedef struct UI_MEMBERS_Handle
 
 #define UI_MEMBERS_COLS_MIN 30
 
+/**
+ * Processes the current key event by the view
+ * to show a chats list of members.
+ *
+ * @param[in,out] members Chat members view
+ * @param[in,out] app Application handle
+ * @param[in] key Key
+ */
 void
 members_event(UI_MEMBERS_Handle *members,
 	      struct MESSENGER_Application *app,
 	      int key);
 
+/**
+ * Prints the content of the view to show
+ * a chats list of members to its selected
+ * window view on screen.
+ *
+ * @param[in,out] members Chat members view
+ */
 void
 members_print(UI_MEMBERS_Handle *members);
 
+/**
+ * Clears the list of members the view
+ * would print to the screen.
+ *
+ * @param[out] members Chat members view
+ */
 void
 members_clear(UI_MEMBERS_Handle *members);
 
+/**
+ * Adds a new chat contact to the list of
+ * members the view will print to the
+ * screen.
+ *
+ * @param[in,out] members Chat members view
+ * @param[in] contact Chat contact
+ * @return #TRUE if the member is new, otherwise #FALSE
+ */
 bool
 members_add(UI_MEMBERS_Handle *members,
 	    struct GNUNET_CHAT_Contact *contact);
 
+/**
+ * Removes a chat contact from the list of
+ * members the view would print to the
+ * screen.
+ *
+ * @param[in,out] members Chat members view
+ * @param[in] contact Chat contact
+ */
 void
 members_remove(UI_MEMBERS_Handle *members,
 	       const struct GNUNET_CHAT_Contact *contact);

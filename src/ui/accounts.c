@@ -114,7 +114,7 @@ accounts_print(UI_ACCOUNTS_Handle *accounts,
 {
   if (accounts->create_dialog.window)
   {
-    account_create_dialog_print(&(accounts->create_dialog), app);
+    account_create_dialog_print(&(accounts->create_dialog));
     return;
   }
 

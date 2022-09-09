@@ -31,6 +31,9 @@
 
 struct MESSENGER_Application;
 
+/**
+ * @struct MESSENGER_Chat
+ */
 typedef struct MESSENGER_Chat
 {
   struct GNUNET_CHAT_Handle *handle;
@@ -42,18 +45,49 @@ typedef struct MESSENGER_Chat
   bool quit;
 } MESSENGER_Chat;
 
+/**
+ * Starts the processing of the given applications
+ * chat handle.
+ *
+ * @param[out] chat Application chat handle
+ * @param[in,out] app Application handle
+ * @param[in] cfg Configuration
+ */
 void
 chat_start(MESSENGER_Chat *chat,
 	   struct MESSENGER_Application *app,
 	   const struct GNUNET_CONFIGURATION_Handle *cfg);
 
+/**
+ * Stops the processing of the given applications
+ * chat handle.
+ *
+ * @param[in,out] chat Application chat handle
+ */
 void
 chat_stop(MESSENGER_Chat *chat);
 
+/**
+ * Updates the layout of the applications views depending
+ * on the main windows resolution and the current state
+ * of the applications chat handle.
+ *
+ * @param[in] chat Application chat handle
+ * @param[out] app Application handle
+ */
 void
 chat_update_layout(MESSENGER_Chat *chat,
 		   struct MESSENGER_Application *app);
 
+/**
+ * Processes a chat message to update the list of
+ * required resources to handle visual representation
+ * of current members in a chat or the messages.
+ *
+ * @param[in,out] chat Application chat handle
+ * @param[in] context Chat context of the message
+ * @param[in] message Chat message
+ */
 void
 chat_process_message(MESSENGER_Chat *chat,
 		     struct GNUNET_CHAT_Context *context,

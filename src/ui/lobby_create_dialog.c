@@ -121,8 +121,7 @@ _lobby_iterate_print(UI_LOBBY_CREATE_DIALOG_Handle *create_dialog,
 }
 
 void
-lobby_create_dialog_print(UI_LOBBY_CREATE_DIALOG_Handle *create_dialog,
-		          UNUSED struct MESSENGER_Application *app)
+lobby_create_dialog_print(UI_LOBBY_CREATE_DIALOG_Handle *create_dialog)
 {
   if (!(create_dialog->win))
     return;

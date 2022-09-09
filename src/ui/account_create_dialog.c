@@ -59,8 +59,7 @@ account_create_dialog_event(UI_ACCOUNT_CREATE_DIALOG_Handle *create_dialog,
 }
 
 void
-account_create_dialog_print(UI_ACCOUNT_CREATE_DIALOG_Handle *create_dialog,
-			    UNUSED struct MESSENGER_Application *app)
+account_create_dialog_print(UI_ACCOUNT_CREATE_DIALOG_Handle *create_dialog)
 {
   if (!(create_dialog->window))
     return;

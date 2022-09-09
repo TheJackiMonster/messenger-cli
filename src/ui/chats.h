@@ -38,6 +38,9 @@
 
 struct MESSENGER_Application;
 
+/**
+ * @struct UI_CHATS_Handle
+ */
 typedef struct UI_CHATS_Handle
 {
   WINDOW *window;
@@ -59,11 +62,27 @@ typedef struct UI_CHATS_Handle
 #define UI_CHATS_ROWS_MIN 8
 #define UI_CHATS_COLS_MIN 30
 
+/**
+ * Processes the current key event by the view
+ * to show the list of available chats.
+ *
+ * @param[in,out] chats Chats view
+ * @param[in,out] app Application handle
+ * @param[in] key Key
+ */
 void
 chats_event(UI_CHATS_Handle *chats,
 	    struct MESSENGER_Application *app,
 	    int key);
 
+/**
+ * Prints the content of the view to show
+ * the list of available chats to its selected
+ * window view on screen.
+ *
+ * @param[in,out] chats Chats view
+ * @param[in] app Application handle
+ */
 void
 chats_print(UI_CHATS_Handle *chats,
 	    struct MESSENGER_Application *app);

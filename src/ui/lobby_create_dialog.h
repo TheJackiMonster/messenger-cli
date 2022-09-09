@@ -34,6 +34,9 @@
 
 struct MESSENGER_Application;
 
+/**
+ * @struct UI_LOBBY_CREATE_DIALOG_Handle
+ */
 typedef struct UI_LOBBY_CREATE_DIALOG_Handle
 {
   WINDOW *window;
@@ -52,13 +55,26 @@ typedef struct UI_LOBBY_CREATE_DIALOG_Handle
   char *uri;
 } UI_LOBBY_CREATE_DIALOG_Handle;
 
+/**
+ * Processes the current key event by the dialog
+ * to create a lobby.
+ *
+ * @param[in,out] create_dialog Lobby creation dialog
+ * @param[in,out] app Application handle
+ * @param[in] key Key
+ */
 void
 lobby_create_dialog_event(UI_LOBBY_CREATE_DIALOG_Handle *create_dialog,
 		          struct MESSENGER_Application *app,
 		          int key);
 
+/**
+ * Prints the content of the dialog to create a
+ * lobby to its selected window view.
+ *
+ * @param[in] create_dialog Lobby creation dialog
+ */
 void
-lobby_create_dialog_print(UI_LOBBY_CREATE_DIALOG_Handle *create_dialog,
-		          struct MESSENGER_Application *app);
+lobby_create_dialog_print(UI_LOBBY_CREATE_DIALOG_Handle *create_dialog);
 
 #endif /* UI_LOBBY_CREATE_DIALOG_H_ */

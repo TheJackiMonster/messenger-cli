@@ -34,6 +34,9 @@
 
 struct MESSENGER_Application;
 
+/**
+ * @struct UI_MESSAGES_List
+ */
 typedef struct UI_MESSAGES_List
 {
   time_t timestamp;
@@ -46,6 +49,9 @@ typedef struct UI_MESSAGES_List
 
 #define TEXT_LEN_MAX 1024
 
+/**
+ * @struct UI_MESSAGES_Handle
+ */
 typedef struct UI_MESSAGES_Handle
 {
   WINDOW *window;
@@ -73,21 +79,58 @@ typedef struct UI_MESSAGES_Handle
 #define UI_MESSAGES_FILE_PREFIX "file:"
 #define UI_MESSAGES_FILE_PREFIX_LEN 5
 
+/**
+ * Processes the current key event by the view
+ * to show a chats list of messages.
+ *
+ * @param[in,out] messages Chat messages view
+ * @param[in,out] app Application handle
+ * @param[in] key Key
+ */
 void
 messages_event(UI_MESSAGES_Handle *messages,
 	       struct MESSENGER_Application *app,
 	       int key);
 
+/**
+ * Prints the content of the view to show
+ * a chats list of messages to its selected
+ * window view on screen.
+ *
+ * @param[in,out] messages Chat messages view
+ */
 void
 messages_print(UI_MESSAGES_Handle *messages);
 
+/**
+ * Clears the list of messages the view
+ * would print to the screen.
+ *
+ * @param[out] messages Chat messages view
+ */
 void
 messages_clear(UI_MESSAGES_Handle *messages);
 
+/**
+ * Adds a new chat message to the list of
+ * messages the view will print to the
+ * screen.
+ *
+ * @param[in,out] messages Chat messages view
+ * @param[in] message Chat message
+ */
 void
 messages_add(UI_MESSAGES_Handle *messages,
 	     const struct GNUNET_CHAT_Message *message);
 
+/**
+ * Removes a chat message from the list of
+ * messages the view would print to the
+ * screen.
+ *
+ * @param[in,out] messages Chat messages view
+ * @param[in] message Chat message
+ */
 void
 messages_remove(UI_MESSAGES_Handle *messages,
 	        const struct GNUNET_CHAT_Message *message);

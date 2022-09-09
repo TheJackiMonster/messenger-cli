@@ -30,6 +30,9 @@
 
 struct MESSENGER_Application;
 
+/**
+ * @struct UI_LOBBY_ENTER_DIALOG_Handle
+ */
 typedef struct UI_LOBBY_ENTER_DIALOG_Handle
 {
   WINDOW **window;
@@ -41,13 +44,26 @@ typedef struct UI_LOBBY_ENTER_DIALOG_Handle
   int uri_pos;
 } UI_LOBBY_ENTER_DIALOG_Handle;
 
+/**
+ * Processes the current key event by the dialog
+ * to enter a lobby.
+ *
+ * @param[in,out] enter_dialog Lobby entry dialog
+ * @param[in,out] app Application handle
+ * @param[in] key Key
+ */
 void
 lobby_enter_dialog_event(UI_LOBBY_ENTER_DIALOG_Handle *enter_dialog,
 		         struct MESSENGER_Application *app,
 		         int key);
 
+/**
+ * Prints the content of the dialog to enter a
+ * lobby to its selected window view.
+ *
+ * @param[in] enter_dialog Lobby entry dialog
+ */
 void
-lobby_enter_dialog_print(UI_LOBBY_ENTER_DIALOG_Handle *enter_dialog,
-		         struct MESSENGER_Application *app);
+lobby_enter_dialog_print(UI_LOBBY_ENTER_DIALOG_Handle *enter_dialog);
 
 #endif /* UI_LOBBY_ENTER_DIALOG_H_ */

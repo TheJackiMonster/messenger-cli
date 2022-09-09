@@ -28,6 +28,9 @@
 #include "members.h"
 #include "messages.h"
 
+/**
+ * @struct UI_CHAT_Handle
+ */
 typedef struct UI_CHAT_Handle
 {
   UI_MEMBERS_Handle members;
