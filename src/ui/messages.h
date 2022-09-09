@@ -70,6 +70,9 @@ typedef struct UI_MESSAGES_Handle
 
 #define UI_MESSAGES_COLS_MIN 50
 
+#define UI_MESSAGES_FILE_PREFIX "file:"
+#define UI_MESSAGES_FILE_PREFIX_LEN 5
+
 void
 messages_event(UI_MESSAGES_Handle *messages,
 	       struct MESSENGER_Application *app,

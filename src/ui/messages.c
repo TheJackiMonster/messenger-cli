@@ -116,7 +116,32 @@ messages_event(UI_MESSAGES_Handle *messages,
 	_messages_handle_message(messages);
       else if (messages->text_len > 0)
       {
-	GNUNET_CHAT_context_send_text(app->chat.context, messages->text);
+	if (0 != strncmp(messages->text,
+			 UI_MESSAGES_FILE_PREFIX,
+			 UI_MESSAGES_FILE_PREFIX_LEN))
+	  goto write_text;
+
+	const char* filename = messages->text + 5;
+
+	if (0 != access(filename, R_OK | F_OK))
+	  break;
+
+	GNUNET_CHAT_context_send_file(
+	    app->chat.context,
+	    filename,
+	    NULL,
+	    NULL
+	);
+
+	goto drop_text;
+
+      write_text:
+	GNUNET_CHAT_context_send_text(
+	    app->chat.context,
+	    messages->text
+	);
+
+      drop_text:
 	messages->text_len = 0;
       }
       break;
@@ -269,7 +294,13 @@ messages_print(UI_MESSAGES_Handle *messages)
   wmove(messages->window, line_height, 0);
   whline(messages->window, '-', width);
 
-  const int attrs_select = A_BOLD;
+  const bool is_file_text = (0 == strncmp(
+      messages->text,
+      UI_MESSAGES_FILE_PREFIX,
+      UI_MESSAGES_FILE_PREFIX_LEN
+  ));
+
+  const int attrs_select = A_BOLD | (is_file_text? A_ITALIC : A_NORMAL);
 
   if (selected) wattron(messages->window, attrs_select);
 
