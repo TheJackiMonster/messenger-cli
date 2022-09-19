@@ -205,11 +205,11 @@ _chat_update_layout_chats(struct MESSENGER_Application *app)
   if (offset_x > 0)
   {
     app->ui.left = subwin(
-	app->window,
-	rows - offset_y,
-	UI_ACCOUNTS_COLS_MIN,
-	offset_y,
-	0
+      app->window,
+      rows - offset_y,
+      UI_ACCOUNTS_COLS_MIN,
+      offset_y,
+      0
     );
 
     wmove(app->window, offset_y > 0? offset_y : 0, UI_ACCOUNTS_COLS_MIN);
@@ -244,12 +244,16 @@ _chat_update_layout_messages(struct MESSENGER_Application *app)
       UTIL_LOGO_COLS : UI_CHATS_COLS_MIN
   );
 
-  int offset_x = 0;
+  int offset_x, cut_x;
+  cut_x = 0;
 
   if (cols >= cols_min_left + UI_MESSAGES_COLS_MIN)
     offset_x = cols_min_left + 1;
   else
+  {
+    offset_x = 0;
     goto skip_left_split;
+  }
 
   if (rows >= UTIL_LOGO_ROWS + UI_CHATS_ROWS_MIN)
   {
@@ -263,8 +267,6 @@ _chat_update_layout_messages(struct MESSENGER_Application *app)
   }
   else
     app->ui.left = subwin(app->window, rows, cols_min_left, 0, 0);
-
-  int cut_x = 0;
 
   if (cols >= cols_min_left + UI_MESSAGES_COLS_MIN + UI_MEMBERS_COLS_MIN)
   {

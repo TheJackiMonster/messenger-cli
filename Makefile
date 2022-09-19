@@ -71,7 +71,7 @@ release: CFLAGS += $(RELEASEFLAGS)
 release: $(BINARY)
 
 %.o: %.c
-	$(GNU_CC) $(CFLAGS) -c $< -o $@ $(LIBRARY_FLAGS)
+	$(GNU_CC) $(CFLAGS) -c $< -o $@
 
 $(BINARY): $(OBJECT_FILES)
 	$(GNU_LD) $(LDFLAGS) $^ -o $@ $(LIBRARY_FLAGS)
