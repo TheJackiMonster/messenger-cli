@@ -24,21 +24,21 @@ The following dependencies are required and need to be installed to build the ap
  - [libgnunetchat](https://git.gnunet.org/libgnunetchat.git/): For chatting via GNUnet messenger
  - [ncurses](https://www.gnu.org/software/ncurses/): For the general UI visualization
 
-Then you can simply use [Autotools](https://www.gnu.org/software/automake/) as follows:
+Then you can simply use [Meson](https://mesonbuild.com/) as follows:
 ```
-./bootstrap        # Generate the configure script
-./configure        # Configure the Makefiles for your system
-make               # Build the application using the Makefiles
-sudo make install  # Install the application
+meson build            # Configure the build files for your system
+ninja -C build         # Build the application using those build files
+ninja -C build install # Install the application
 ```
 
-Here is a list of some useful build targets in the Makefile:
+Here is a list of some useful build commands using Meson and [Ninja](https://ninja-build.org/):
 
- - `make` to just compile everything with default parameters
- - `make clean` to cleanup build files in case you want to recompile
- - `make install` to install the compiled files (you might need sudo permissions to install)
+ - `meson compile -C build` to just compile everything with configured parameters
+ - `rm -r build` to cleanup build files in case you want to recompile
+ - `meson install -C build` to install the compiled files (you might need sudo permissions to install)
+ - `meson dist -C build` to create a tar file for distribution
 
-If you want to change the installation location, use the `--prefix=` parameter in the `configure` script. Also you can enable debugging builds by adding `--enable-debug` as parameter when running the `configure` script.
+If you want to change the installation location, use the `--prefix=` parameter in the initial meson command. Also you can enable optimized release builds by adding `--buildtype=release` as parameter.
 
 ## Contribution
 

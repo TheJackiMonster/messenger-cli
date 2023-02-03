@@ -19,6 +19,7 @@ Makefile
 .cproject
 .project
 .settings/
+.cache/
 
 # Binary files:
 *.o
