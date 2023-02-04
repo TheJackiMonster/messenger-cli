@@ -36,7 +36,7 @@ messenger_cli_deps = [
 subdir('src')
 
 messenger_cli_exec = executable(
-    'messenger_cli',
+    'messenger-cli',
     messenger_cli_sources,
     install: true,
     dependencies: messenger_cli_deps,
