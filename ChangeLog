@@ -1,3 +1,7 @@
+## Version 0.1.1
+* Replaces build system finally with Meson increasing platform support
+* Fixes issues regarding changes in header usage from GNUnet 0.19.0
+
 ## Version 0.1.0
 * It is possible to create direct chats and group chats via lobbies, shared keys or invitations
 * Members of a chats can be observed
