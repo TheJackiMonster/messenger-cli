@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022 GNUnet e.V.
+   Copyright (C) 2022--2024 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -31,7 +31,7 @@
 
 struct tm*
 _messages_new_day(time_t* current_time,
-		  const time_t* timestamp)
+		              const time_t* timestamp)
 {
   struct tm* ts = localtime(timestamp);
 
@@ -57,21 +57,21 @@ _messages_handle_message(UI_MESSAGES_Handle *messages)
     case GNUNET_CHAT_KIND_INVITATION:
     {
       struct GNUNET_CHAT_Invitation *invitation = (
-	  GNUNET_CHAT_message_get_invitation(messages->selected)
+	      GNUNET_CHAT_message_get_invitation(messages->selected)
       );
 
       if (invitation)
-	GNUNET_CHAT_invitation_accept(invitation);
+	      GNUNET_CHAT_invitation_accept(invitation);
       break;
     }
     case GNUNET_CHAT_KIND_FILE:
     {
       struct GNUNET_CHAT_File *file = GNUNET_CHAT_message_get_file(
-	  messages->selected
+	      messages->selected
       );
 
       if ((file) && (GNUNET_YES != GNUNET_CHAT_file_is_downloading(file)))
-	GNUNET_CHAT_file_start_download(file, NULL, NULL);
+	      GNUNET_CHAT_file_start_download(file, NULL, NULL);
       break;
     default:
       break;
@@ -81,8 +81,8 @@ _messages_handle_message(UI_MESSAGES_Handle *messages)
 
 void
 messages_event(UI_MESSAGES_Handle *messages,
-	       MESSENGER_Application *app,
-	       int key)
+               MESSENGER_Application *app,
+               int key)
 {
   list_input_reset(messages);
   messages->line_time = 0;
@@ -91,8 +91,8 @@ messages_event(UI_MESSAGES_Handle *messages,
   while (element)
   {
     struct tm *ts = _messages_new_day(
-	&(messages->line_time),
-	&(element->timestamp)
+      &(messages->line_time),
+      &(element->timestamp)
     );
 
     list_input_select(messages, ts? 2 : 1, element->message);
@@ -113,44 +113,44 @@ messages_event(UI_MESSAGES_Handle *messages,
     case '\n':
     case KEY_ENTER:
       if (messages->selected)
-	_messages_handle_message(messages);
+	      _messages_handle_message(messages);
       else if (messages->text_len > 0)
       {
-	if (0 != strncmp(messages->text,
-			 UI_MESSAGES_FILE_PREFIX,
-			 UI_MESSAGES_FILE_PREFIX_LEN))
-	  goto write_text;
+	      if (0 != strncmp(messages->text,
+                      UI_MESSAGES_FILE_PREFIX,
+                      UI_MESSAGES_FILE_PREFIX_LEN))
+	        goto write_text;
 
-	const char* filename = messages->text + 5;
+	      const char* filename = messages->text + 5;
 
-	if (0 != access(filename, R_OK | F_OK))
-	  break;
+        if (0 != access(filename, R_OK | F_OK))
+          break;
 
-	GNUNET_CHAT_context_send_file(
-	    app->chat.context,
-	    filename,
-	    NULL,
-	    NULL
-	);
+        GNUNET_CHAT_context_send_file(
+          app->chat.context,
+          filename,
+          NULL,
+          NULL
+        );
 
-	goto drop_text;
+	      goto drop_text;
 
       write_text:
-	GNUNET_CHAT_context_send_text(
-	    app->chat.context,
-	    messages->text
-	);
+        GNUNET_CHAT_context_send_text(
+          app->chat.context,
+          messages->text
+        );
 
       drop_text:
-	messages->text_len = 0;
+	      messages->text_len = 0;
       }
       break;
     case KEY_BACKSPACE:
       if (messages->selected)
-	GNUNET_CHAT_message_delete(
-	    messages->selected,
-	    GNUNET_TIME_relative_get_zero_()
-	);
+	      GNUNET_CHAT_message_delete(
+          messages->selected,
+          GNUNET_TIME_relative_get_zero_()
+	      );
       break;
     default:
       break;
@@ -164,8 +164,8 @@ messages_event(UI_MESSAGES_Handle *messages,
 
 void
 _messages_iterate_print(UI_MESSAGES_Handle *messages,
-			const time_t* timestamp,
-			const struct GNUNET_CHAT_Message *message)
+                        const time_t* timestamp,
+                        const struct GNUNET_CHAT_Message *message)
 {
   enum GNUNET_CHAT_MessageKind kind = GNUNET_CHAT_message_get_kind(message);
 
@@ -209,31 +209,31 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
   switch (kind) {
     case GNUNET_CHAT_KIND_JOIN:
       wprintw(
-      	  messages->window,
-      	  "%s joins the room.",
-      	  name
+        messages->window,
+        "%s joins the room.",
+        name
       );
       break;
     case GNUNET_CHAT_KIND_LEAVE:
       wprintw(
-	    messages->window,
-	    "%s leaves the room.",
-	    name
+        messages->window,
+        "%s leaves the room.",
+        name
       );
       break;
     case GNUNET_CHAT_KIND_INVITATION:
       wprintw(
-	    messages->window,
-	    "%s invites you to a room.",
-	    name
+        messages->window,
+        "%s invites you to a room.",
+        name
       );
       break;
     case GNUNET_CHAT_KIND_TEXT:
       wprintw(
-	  messages->window,
-      	  "%s: %s",
-      	  name,
-      	  text
+	      messages->window,
+        "%s: %s",
+        name,
+        text
       );
       break;
     case GNUNET_CHAT_KIND_FILE: {
@@ -243,22 +243,22 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
       const uint64_t filesize = GNUNET_CHAT_file_get_size(file);
 
       wprintw(
-	  messages->window,
-	  "%s shares the file '%s' (%lu / %lu) with you.",
-	  name,
-	  filename,
-	  localsize,
-	  filesize
+        messages->window,
+        "%s shares the file '%s' (%lu / %lu) with you.",
+        name,
+        filename,
+        localsize,
+        filesize
       );
       break;
     }
     default:
       wprintw(
-	  messages->window,
-	  "[%d] %s: %s",
-	  (int) kind,
-	  name,
-	  text
+        messages->window,
+        "[%d] %s: %s",
+        (int) kind,
+        name,
+        text
       );
       break;
   }
@@ -295,9 +295,9 @@ messages_print(UI_MESSAGES_Handle *messages)
   whline(messages->window, '-', width);
 
   const bool is_file_text = (0 == strncmp(
-      messages->text,
-      UI_MESSAGES_FILE_PREFIX,
-      UI_MESSAGES_FILE_PREFIX_LEN
+    messages->text,
+    UI_MESSAGES_FILE_PREFIX,
+    UI_MESSAGES_FILE_PREFIX_LEN
   ));
 
   const int attrs_select = A_BOLD | (is_file_text? A_ITALIC : A_NORMAL);
@@ -327,9 +327,9 @@ messages_clear(UI_MESSAGES_Handle *messages)
     element = messages->head;
 
     GNUNET_CONTAINER_DLL_remove(
-	messages->head,
-	messages->tail,
-	element
+      messages->head,
+      messages->tail,
+      element
     );
 
     GNUNET_free(element);
@@ -338,8 +338,8 @@ messages_clear(UI_MESSAGES_Handle *messages)
 
 static int
 _message_compare_timestamps(UNUSED void *cls,
-			    UI_MESSAGES_List *list0,
-			    UI_MESSAGES_List *list1)
+                            UI_MESSAGES_List *list0,
+                            UI_MESSAGES_List *list1)
 {
   if ((!list0) || (!list1))
     return 0;
@@ -354,11 +354,12 @@ _message_compare_timestamps(UNUSED void *cls,
 
 void
 messages_add(UI_MESSAGES_Handle *messages,
-	     const struct GNUNET_CHAT_Message *message)
+	           const struct GNUNET_CHAT_Message *message)
 {
   enum GNUNET_CHAT_MessageKind kind = GNUNET_CHAT_message_get_kind(message);
 
   switch (kind) {
+    case GNUNET_CHAT_KIND_UPDATE:
     case GNUNET_CHAT_KIND_CONTACT:
     case GNUNET_CHAT_KIND_WHISPER:
     case GNUNET_CHAT_KIND_DELETION:
@@ -385,11 +386,11 @@ messages_add(UI_MESSAGES_Handle *messages,
   list_input_select(messages, 1, NULL);
 
   const struct GNUNET_TIME_Absolute abs_time = (
-      GNUNET_CHAT_message_get_timestamp(message)
+    GNUNET_CHAT_message_get_timestamp(message)
   );
 
   const struct GNUNET_TIME_Timestamp timestamp = (
-      GNUNET_TIME_absolute_to_timestamp(abs_time)
+    GNUNET_TIME_absolute_to_timestamp(abs_time)
   );
 
   element = GNUNET_new(UI_MESSAGES_List);
@@ -413,7 +414,7 @@ messages_add(UI_MESSAGES_Handle *messages,
 
 void
 messages_remove(UI_MESSAGES_Handle *messages,
-	        const struct GNUNET_CHAT_Message *message)
+	              const struct GNUNET_CHAT_Message *message)
 {
   UI_MESSAGES_List *element = messages->head;
   while (element)
@@ -426,8 +427,8 @@ messages_remove(UI_MESSAGES_Handle *messages,
 
   if (element)
     GNUNET_CONTAINER_DLL_remove(
-	messages->head,
-	messages->tail,
-	element
+      messages->head,
+      messages->tail,
+      element
     );
 }
