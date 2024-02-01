@@ -361,7 +361,6 @@ messages_add(UI_MESSAGES_Handle *messages,
   switch (kind) {
     case GNUNET_CHAT_KIND_UPDATE:
     case GNUNET_CHAT_KIND_CONTACT:
-    case GNUNET_CHAT_KIND_WHISPER:
     case GNUNET_CHAT_KIND_DELETION:
       return;
     default:
