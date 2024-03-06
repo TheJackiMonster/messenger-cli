@@ -1,6 +1,6 @@
 #
 # This file is part of GNUnet.
-# Copyright (C) 2023 GNUnet e.V.
+# Copyright (C) 2023--2024 GNUnet e.V.
 #
 # GNUnet is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -24,6 +24,8 @@ project(
     license: 'AGPL3.0-or-later',
     version: run_command('contrib/get_version.sh').stdout().strip(),
 )
+
+meson.add_dist_script('contrib/distribute_version.sh', meson.project_version())
 
 src_directory = include_directories('src')
 
