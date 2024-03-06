@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022 GNUnet e.V.
+   Copyright (C) 2022--2024 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -27,8 +27,10 @@
 #include "list_input.h"
 #include "../application.h"
 #include "../util.h"
+#include <gnunet/gnunet_chat_lib.h>
+#include <gnunet/gnunet_common.h>
 
-static int
+static enum GNUNET_GenericReturnValue
 _chats_iterate_group(void *cls,
 		     UNUSED struct GNUNET_CHAT_Handle *handle,
 		     struct GNUNET_CHAT_Group *group)
@@ -38,17 +40,21 @@ _chats_iterate_group(void *cls,
   return GNUNET_YES;
 }
 
-static int
+static enum GNUNET_GenericReturnValue
 _chats_iterate_contact(void *cls,
 		       UNUSED struct GNUNET_CHAT_Handle *handle,
 		       struct GNUNET_CHAT_Contact *contact)
 {
   UI_CHATS_Handle *chats = cls;
+
+  if (GNUNET_YES == GNUNET_CHAT_contact_is_owned(contact))
+    return GNUNET_YES;
+
   list_input_select(chats, 1, GNUNET_CHAT_contact_get_context(contact));
   return GNUNET_YES;
 }
 
-static int
+static enum GNUNET_GenericReturnValue
 _chats_iterate_messages(void *cls,
 			struct GNUNET_CHAT_Context *context,
 			const struct GNUNET_CHAT_Message *message)
@@ -165,7 +171,7 @@ _chats_print_entry(UI_CHATS_Handle *chats,
   return GNUNET_YES;
 }
 
-int
+enum GNUNET_GenericReturnValue
 _chats_iterate_print_group(void *cls,
 			   UNUSED struct GNUNET_CHAT_Handle *handle,
 			   struct GNUNET_CHAT_Group *group)
@@ -175,12 +181,16 @@ _chats_iterate_print_group(void *cls,
   return _chats_print_entry(chats, 'x', 'G', name);
 }
 
-int
+enum GNUNET_GenericReturnValue
 _chats_iterate_print_contact(void *cls,
 			     UNUSED struct GNUNET_CHAT_Handle *handle,
 			     struct GNUNET_CHAT_Contact *contact)
 {
   UI_CHATS_Handle *chats = cls;
+
+  if (GNUNET_YES == GNUNET_CHAT_contact_is_owned(contact))
+    return GNUNET_YES;
+
   const char *name = GNUNET_CHAT_contact_get_name(contact);
   return _chats_print_entry(chats, 'x', 'C', name);
 }

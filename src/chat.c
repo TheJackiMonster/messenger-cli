@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022 GNUnet e.V.
+   Copyright (C) 2022--2024 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -26,6 +26,7 @@
 
 #include "application.h"
 #include "util.h"
+#include <gnunet/gnunet_chat_lib.h>
 
 static void
 _chat_refresh(MESSENGER_Application *app)
@@ -357,6 +358,8 @@ chat_process_message(UNUSED MESSENGER_Chat *chat,
 	&(current->messages),
 	GNUNET_CHAT_message_get_target(message)
     );
+  else if (GNUNET_YES == GNUNET_CHAT_message_is_deleted(message))
+    messages_remove(&(current->messages), message);
   else if ((GNUNET_CHAT_KIND_JOIN != kind) || (new_member))
     messages_add(&(current->messages), message);
 }
