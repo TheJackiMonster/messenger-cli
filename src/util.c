@@ -48,11 +48,11 @@ util_print_info(WINDOW *window,
                 const char *info)
 {
   const int x = getmaxx(window) - strlen(info) - 1;
-
-  if (x < UTIL_LOGO_COLS)
-    return;
-  
   const int y = getcury(window);
+
+  if ((x + (y - 2) / 2 < UTIL_LOGO_COLS - 7) ||
+      ((y < 4) && (x < UTIL_LOGO_COLS)))
+    return;
 
   wmove(window, y, x);
   wprintw(window, "%s", info);
