@@ -28,6 +28,8 @@
 #include "text_input.h"
 #include "../application.h"
 #include "../util.h"
+#include <gnunet/gnunet_chat_lib.h>
+#include <gnunet/gnunet_common.h>
 
 struct tm*
 _messages_new_day(time_t* current_time,
@@ -167,11 +169,27 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
                         const time_t* timestamp,
                         const struct GNUNET_CHAT_Message *message)
 {
+  static const char *you = "you";
+
   enum GNUNET_CHAT_MessageKind kind = GNUNET_CHAT_message_get_kind(message);
 
   struct GNUNET_CHAT_Contact *sender = GNUNET_CHAT_message_get_sender(message);
+  struct GNUNET_CHAT_Contact *recipient = GNUNET_CHAT_message_get_recipient(message);
 
-  const char *name = sender? GNUNET_CHAT_contact_get_name(sender) : NULL;
+  enum GNUNET_GenericReturnValue sent = GNUNET_CHAT_message_is_sent(message);
+  const char *msg_s = GNUNET_YES == sent? "" : "s";
+
+  enum GNUNET_GenericReturnValue recv = recipient? 
+    GNUNET_CHAT_contact_is_owned(recipient) : GNUNET_NO;
+
+  const char *name = GNUNET_YES == sent? you : (
+    sender? GNUNET_CHAT_contact_get_name(sender) : NULL
+  );
+
+  const char *rcp = GNUNET_YES == recv? you : (
+    recipient? GNUNET_CHAT_contact_get_name(recipient) : you
+  );
+
   const char *text = GNUNET_CHAT_message_get_text(message);
 
   const struct GNUNET_CHAT_File *file = GNUNET_CHAT_message_get_file(message);
@@ -210,22 +228,26 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
     case GNUNET_CHAT_KIND_JOIN:
       wprintw(
         messages->window,
-        "%s joins the room.",
-        name
+        "%s join%s the room.",
+        name,
+        msg_s
       );
       break;
     case GNUNET_CHAT_KIND_LEAVE:
       wprintw(
         messages->window,
-        "%s leaves the room.",
-        name
+        "%s leave%s the room.",
+        name,
+        msg_s
       );
       break;
     case GNUNET_CHAT_KIND_INVITATION:
       wprintw(
         messages->window,
-        "%s invites you to a room.",
-        name
+        "%s invite%s %s to a room.",
+        name,
+        msg_s,
+        rcp
       );
       break;
     case GNUNET_CHAT_KIND_TEXT:
@@ -244,8 +266,9 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
 
       wprintw(
         messages->window,
-        "%s shares the file '%s' (%lu / %lu) with you.",
+        "%s share%s the file '%s' (%lu / %lu).",
         name,
+        msg_s,
         filename,
         localsize,
         filesize
