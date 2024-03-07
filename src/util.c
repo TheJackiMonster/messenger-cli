@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022 GNUnet e.V.
+   Copyright (C) 2022--2024 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -23,6 +23,7 @@
  */
 
 #include "util.h"
+#include <string.h>
 
 void
 util_print_logo(WINDOW *window)
@@ -40,4 +41,19 @@ util_print_logo(WINDOW *window)
   wmove(window, y++, x); wprintw(window, "           \\oooo/           ");
   wmove(window, y++, x); wprintw(window, "            oooo            ");
   wmove(window, y++, x); wprintw(window, "                            ");
+}
+
+void
+util_print_info(WINDOW *window,
+                const char *info)
+{
+  const int x = getmaxx(window) - strlen(info) - 1;
+
+  if (x < UTIL_LOGO_COLS)
+    return;
+  
+  const int y = getcury(window);
+
+  wmove(window, y, x);
+  wprintw(window, "%s", info);
 }

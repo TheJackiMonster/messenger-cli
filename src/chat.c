@@ -26,7 +26,16 @@
 
 #include "application.h"
 #include "util.h"
+#include <curses.h>
 #include <gnunet/gnunet_chat_lib.h>
+
+#ifndef MESSENGER_CLI_BINARY
+#define MESSENGER_CLI_BINARY "messenger_cli"
+#endif
+
+#ifndef MESSENGER_CLI_VERSION
+#define MESSENGER_CLI_VERSION "unknown"
+#endif
 
 static void
 _chat_refresh(MESSENGER_Application *app)
@@ -46,6 +55,14 @@ _chat_refresh(MESSENGER_Application *app)
   wmove(app->ui.logo, 0, 0);
 
   util_print_logo(app->ui.logo);
+
+  int x = getcurx(app->ui.logo);
+  int y = getcury(app->ui.logo);
+
+  util_print_info(app->ui.logo, MESSENGER_CLI_VERSION);
+
+  wmove(app->ui.logo, --y, x);
+  util_print_info(app->ui.logo, MESSENGER_CLI_BINARY);
 }
 
 static bool

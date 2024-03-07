@@ -35,11 +35,17 @@ messenger_cli_deps = [
     dependency('ncurses'),
 ]
 
+messenger_cli_args = [
+    '-DMESSENGER_CLI_BINARY="@0@"'.format(meson.project_name()),
+    '-DMESSENGER_CLI_VERSION="@0@"'.format(meson.project_version()),
+]
+
 subdir('src')
 
 messenger_cli_exec = executable(
     'messenger-cli',
     messenger_cli_sources,
+    c_args: messenger_cli_args,
     install: true,
     dependencies: messenger_cli_deps,
     include_directories: src_directory,

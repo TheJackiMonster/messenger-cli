@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022 GNUnet e.V.
+   Copyright (C) 2022--2024 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -42,5 +42,16 @@
  */
 void
 util_print_logo(WINDOW *window);
+
+/**
+ * Print information on the right side of
+ * the application besides the main logo.
+ *
+ * @param[in,out] window Window view
+ * @param[in] info Information
+ */
+void
+util_print_info(WINDOW *window,
+                const char *info);
 
 #endif /* UTIL_H_ */

@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022--2023 GNUnet e.V.
+   Copyright (C) 2022--2024 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -26,6 +26,18 @@
 
 #include "util.h"
 
+#ifndef MESSENGER_CLI_BINARY
+#define MESSENGER_CLI_BINARY "messenger_cli"
+#endif
+
+#ifndef MESSENGER_CLI_VERSION
+#define MESSENGER_CLI_VERSION "unknown"
+#endif
+
+#ifndef MESSENGER_CLI_DESC
+#define MESSENGER_CLI_DESC "A CLI for the Messenger service of GNUnet."
+#endif
+
 void
 application_clear(MESSENGER_Application *app)
 {
@@ -37,13 +49,33 @@ application_clear(MESSENGER_Application *app)
 
 void
 application_init(MESSENGER_Application *app,
-		 int argc,
-		 char **argv)
+                 int argc,
+                 char **argv)
 {
+  const struct GNUNET_GETOPT_CommandLineOption options [] = {
+    GNUNET_GETOPT_option_version(MESSENGER_CLI_VERSION),
+    GNUNET_GETOPT_option_help(MESSENGER_CLI_DESC),
+    GNUNET_GETOPT_OPTION_END
+  };
+
   memset(app, 0, sizeof(*app));
 
   app->argc = argc;
   app->argv = argv;
+
+  const int parsing = GNUNET_GETOPT_run(
+    MESSENGER_CLI_BINARY,
+    options,
+    app->argc,
+    app->argv
+  );
+
+  if (parsing <= 0)
+  {
+    app->window = NULL;
+    app->status = GNUNET_SYSERR == parsing? GNUNET_SYSERR : GNUNET_OK;
+    return;
+  }
 
   app->window = initscr();
 
@@ -92,18 +124,18 @@ run (void *cls,
 void
 application_run(MESSENGER_Application *app)
 {
-  struct GNUNET_GETOPT_CommandLineOption options[] = {
-      GNUNET_GETOPT_OPTION_END
+  const struct GNUNET_GETOPT_CommandLineOption options [] = {
+    GNUNET_GETOPT_OPTION_END
   };
 
   app->status = GNUNET_PROGRAM_run(
-      app->argc,
-      app->argv,
-      "messenger_cli",
-      gettext_noop("A CLI for the Messenger service of GNUnet."),
-      options,
-      &run,
-      app
+    1,
+    app->argv,
+    MESSENGER_CLI_BINARY,
+    gettext_noop(MESSENGER_CLI_DESC),
+    options,
+    &run,
+    app
   );
 
   members_clear(&(app->current.members));
