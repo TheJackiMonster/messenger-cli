@@ -382,7 +382,7 @@ messages_add(UI_MESSAGES_Handle *messages,
   enum GNUNET_CHAT_MessageKind kind = GNUNET_CHAT_message_get_kind(message);
 
   switch (kind) {
-    case GNUNET_CHAT_KIND_UPDATE:
+    case GNUNET_CHAT_KIND_UPDATE_CONTEXT:
     case GNUNET_CHAT_KIND_CONTACT:
     case GNUNET_CHAT_KIND_DELETION:
       return;
