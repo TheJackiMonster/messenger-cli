@@ -1,3 +1,8 @@
+## Version 0.2.0
+* Removes visual whispering when receiving private messages for others
+* Implements visual hint for binary version
+* Fixes compatibility with libgnunetchat 0.3.0
+
 ## Version 0.1.1
 * Replaces build system finally with Meson increasing platform support
 * Fixes issues regarding changes in header usage from GNUnet 0.19.0
