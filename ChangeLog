@@ -1,3 +1,6 @@
+## Version 0.3.0
+* Fixes compatibility with libgnunetchat 0.5.0
+
 ## Version 0.2.0
 * Removes visual whispering when receiving private messages for others
 * Implements visual hint for binary version
