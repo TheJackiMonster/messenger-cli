@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022 GNUnet e.V.
+   Copyright (C) 2022--2024 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -30,7 +30,7 @@
 
 int
 _accounts_iterate(void *cls,
-                  UNUSED const struct GNUNET_CHAT_Handle *handle,
+                  UNUSED struct GNUNET_CHAT_Handle *handle,
                   struct GNUNET_CHAT_Account *account)
 {
   UI_ACCOUNTS_Handle *accounts = cls;
@@ -40,8 +40,8 @@ _accounts_iterate(void *cls,
 
 void
 accounts_event(UI_ACCOUNTS_Handle *accounts,
-	       MESSENGER_Application *app,
-	       int key)
+               MESSENGER_Application *app,
+               int key)
 {
   if (accounts->create_dialog.window)
   {
@@ -81,8 +81,8 @@ accounts_event(UI_ACCOUNTS_Handle *accounts,
 
 static int
 _accounts_print_entry(UI_ACCOUNTS_Handle *accounts,
-		      char type,
-		      const char *text)
+                      char type,
+                      const char *text)
 {
   list_input_print_gnunet(accounts, 1);
 
@@ -100,7 +100,7 @@ _accounts_print_entry(UI_ACCOUNTS_Handle *accounts,
 
 int
 _accounts_iterate_print(void *cls,
-                        UNUSED const struct GNUNET_CHAT_Handle *handle,
+                        UNUSED struct GNUNET_CHAT_Handle *handle,
                         struct GNUNET_CHAT_Account *account)
 {
   UI_ACCOUNTS_Handle *accounts = cls;
@@ -110,7 +110,7 @@ _accounts_iterate_print(void *cls,
 
 void
 accounts_print(UI_ACCOUNTS_Handle *accounts,
-	       MESSENGER_Application *app)
+               MESSENGER_Application *app)
 {
   if (accounts->create_dialog.window)
   {

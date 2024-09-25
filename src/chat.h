@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022--2023 GNUnet e.V.
+   Copyright (C) 2022--2024 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -54,8 +54,8 @@ typedef struct MESSENGER_Chat
  */
 void
 chat_start(MESSENGER_Chat *chat,
-	   struct MESSENGER_Application *app,
-	   const struct GNUNET_CONFIGURATION_Handle *cfg);
+           struct MESSENGER_Application *app,
+           const struct GNUNET_CONFIGURATION_Handle *cfg);
 
 /**
  * Stops the processing of the given applications
@@ -76,7 +76,7 @@ chat_stop(MESSENGER_Chat *chat);
  */
 void
 chat_update_layout(MESSENGER_Chat *chat,
-		   struct MESSENGER_Application *app);
+                   struct MESSENGER_Application *app);
 
 /**
  * Processes a chat message to update the list of
@@ -89,7 +89,7 @@ chat_update_layout(MESSENGER_Chat *chat,
  */
 void
 chat_process_message(MESSENGER_Chat *chat,
-		     struct GNUNET_CHAT_Context *context,
-		     const struct GNUNET_CHAT_Message *message);
+                     struct GNUNET_CHAT_Context *context,
+                     struct GNUNET_CHAT_Message *message);
 
 #endif /* CHAT_H_ */

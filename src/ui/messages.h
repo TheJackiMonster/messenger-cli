@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022--2023 GNUnet e.V.
+   Copyright (C) 2022--2024 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -42,7 +42,7 @@ typedef struct UI_MESSAGES_List
 {
   time_t timestamp;
 
-  const struct GNUNET_CHAT_Message *message;
+  struct GNUNET_CHAT_Message *message;
 
   struct UI_MESSAGES_List *prev;
   struct UI_MESSAGES_List *next;
@@ -68,7 +68,7 @@ typedef struct UI_MESSAGES_Handle
   int line_selected;
   time_t line_time;
 
-  const struct GNUNET_CHAT_Message *selected;
+  struct GNUNET_CHAT_Message *selected;
 
   char text [1024];
   int text_len;
@@ -90,8 +90,8 @@ typedef struct UI_MESSAGES_Handle
  */
 void
 messages_event(UI_MESSAGES_Handle *messages,
-	       struct MESSENGER_Application *app,
-	       int key);
+               struct MESSENGER_Application *app,
+               int key);
 
 /**
  * Prints the content of the view to show
@@ -118,11 +118,11 @@ messages_clear(UI_MESSAGES_Handle *messages);
  * screen.
  *
  * @param[in,out] messages Chat messages view
- * @param[in] message Chat message
+ * @param[in,out] message Chat message
  */
 void
 messages_add(UI_MESSAGES_Handle *messages,
-	     const struct GNUNET_CHAT_Message *message);
+             struct GNUNET_CHAT_Message *message);
 
 /**
  * Removes a chat message from the list of
@@ -130,10 +130,10 @@ messages_add(UI_MESSAGES_Handle *messages,
  * screen.
  *
  * @param[in,out] messages Chat messages view
- * @param[in] message Chat message
+ * @param[in,out] message Chat message
  */
 void
 messages_remove(UI_MESSAGES_Handle *messages,
-	        const struct GNUNET_CHAT_Message *message);
+                struct GNUNET_CHAT_Message *message);
 
 #endif /* UI_MESSAGES_H_ */

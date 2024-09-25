@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022--2023 GNUnet e.V.
+   Copyright (C) 2022--2024 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -71,8 +71,8 @@ typedef struct UI_CHATS_Handle
  */
 void
 chats_event(UI_CHATS_Handle *chats,
-	    struct MESSENGER_Application *app,
-	    int key);
+            struct MESSENGER_Application *app,
+            int key);
 
 /**
  * Prints the content of the view to show
@@ -84,6 +84,6 @@ chats_event(UI_CHATS_Handle *chats,
  */
 void
 chats_print(UI_CHATS_Handle *chats,
-	    struct MESSENGER_Application *app);
+            struct MESSENGER_Application *app);
 
 #endif /* UI_CHATS_H_ */

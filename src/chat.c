@@ -67,7 +67,7 @@ _chat_refresh(MESSENGER_Application *app)
 
 static bool
 _chat_event(MESSENGER_Application *app,
-	    int key)
+            int key)
 {
   if (key < 0)
     goto refresh;
@@ -98,8 +98,8 @@ refresh:
 
 static int
 _chat_message(void *cls,
-	      struct GNUNET_CHAT_Context *context,
-	      const struct GNUNET_CHAT_Message *message)
+              struct GNUNET_CHAT_Context *context,
+              struct GNUNET_CHAT_Message *message)
 {
   MESSENGER_Application *app = cls;
 
@@ -137,8 +137,8 @@ _chat_idle(void *cls)
 
 void
 chat_start(MESSENGER_Chat *chat,
-	   struct MESSENGER_Application *app,
-	   const struct GNUNET_CONFIGURATION_Handle *cfg)
+           struct MESSENGER_Application *app,
+           const struct GNUNET_CONFIGURATION_Handle *cfg)
 {
   chat->handle = GNUNET_CHAT_start(
       cfg,
@@ -331,7 +331,7 @@ skip_left_split:
 
 void
 chat_update_layout(MESSENGER_Chat *chat,
-		   struct MESSENGER_Application *app)
+                   struct MESSENGER_Application *app)
 {
   const struct GNUNET_CHAT_Account *account = GNUNET_CHAT_get_connected(
       chat->handle
@@ -349,8 +349,8 @@ chat_update_layout(MESSENGER_Chat *chat,
 
 void
 chat_process_message(UNUSED MESSENGER_Chat *chat,
-		     struct GNUNET_CHAT_Context *context,
-		     const struct GNUNET_CHAT_Message *message)
+                     struct GNUNET_CHAT_Context *context,
+                     struct GNUNET_CHAT_Message *message)
 {
   enum GNUNET_CHAT_MessageKind kind = GNUNET_CHAT_message_get_kind(message);
 

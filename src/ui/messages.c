@@ -33,7 +33,7 @@
 
 struct tm*
 _messages_new_day(time_t* current_time,
-		              const time_t* timestamp)
+                  const time_t* timestamp)
 {
   struct tm* ts = localtime(timestamp);
 
@@ -118,12 +118,12 @@ messages_event(UI_MESSAGES_Handle *messages,
 	      _messages_handle_message(messages);
       else if (messages->text_len > 0)
       {
-	      if (0 != strncmp(messages->text,
-                      UI_MESSAGES_FILE_PREFIX,
-                      UI_MESSAGES_FILE_PREFIX_LEN))
-	        goto write_text;
+        if (0 != strncmp(messages->text,
+                         UI_MESSAGES_FILE_PREFIX,
+                         UI_MESSAGES_FILE_PREFIX_LEN))
+          goto write_text;
 
-	      const char* filename = messages->text + 5;
+        const char* filename = messages->text + 5;
 
         if (0 != access(filename, R_OK | F_OK))
           break;
@@ -135,7 +135,7 @@ messages_event(UI_MESSAGES_Handle *messages,
           NULL
         );
 
-	      goto drop_text;
+        goto drop_text;
 
       write_text:
         GNUNET_CHAT_context_send_text(
@@ -167,7 +167,7 @@ messages_event(UI_MESSAGES_Handle *messages,
 void
 _messages_iterate_print(UI_MESSAGES_Handle *messages,
                         const time_t* timestamp,
-                        const struct GNUNET_CHAT_Message *message)
+                        struct GNUNET_CHAT_Message *message)
 {
   static const char *you = "you";
 
@@ -377,7 +377,7 @@ _message_compare_timestamps(UNUSED void *cls,
 
 void
 messages_add(UI_MESSAGES_Handle *messages,
-	           const struct GNUNET_CHAT_Message *message)
+             struct GNUNET_CHAT_Message *message)
 {
   enum GNUNET_CHAT_MessageKind kind = GNUNET_CHAT_message_get_kind(message);
 
@@ -436,7 +436,7 @@ messages_add(UI_MESSAGES_Handle *messages,
 
 void
 messages_remove(UI_MESSAGES_Handle *messages,
-	              const struct GNUNET_CHAT_Message *message)
+                struct GNUNET_CHAT_Message *message)
 {
   UI_MESSAGES_List *element = messages->head;
   while (element)

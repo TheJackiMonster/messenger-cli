@@ -32,8 +32,8 @@
 
 static enum GNUNET_GenericReturnValue
 _chats_iterate_group(void *cls,
-		     UNUSED struct GNUNET_CHAT_Handle *handle,
-		     struct GNUNET_CHAT_Group *group)
+                     UNUSED struct GNUNET_CHAT_Handle *handle,
+                     struct GNUNET_CHAT_Group *group)
 {
   UI_CHATS_Handle *chats = cls;
   list_input_select(chats, 1, GNUNET_CHAT_group_get_context(group));
@@ -42,8 +42,8 @@ _chats_iterate_group(void *cls,
 
 static enum GNUNET_GenericReturnValue
 _chats_iterate_contact(void *cls,
-		       UNUSED struct GNUNET_CHAT_Handle *handle,
-		       struct GNUNET_CHAT_Contact *contact)
+                       UNUSED struct GNUNET_CHAT_Handle *handle,
+                       struct GNUNET_CHAT_Contact *contact)
 {
   UI_CHATS_Handle *chats = cls;
 
@@ -56,8 +56,8 @@ _chats_iterate_contact(void *cls,
 
 static enum GNUNET_GenericReturnValue
 _chats_iterate_messages(void *cls,
-			struct GNUNET_CHAT_Context *context,
-			const struct GNUNET_CHAT_Message *message)
+                        struct GNUNET_CHAT_Context *context,
+                        struct GNUNET_CHAT_Message *message)
 {
   MESSENGER_Chat *chat = cls;
   chat_process_message(chat, context, message);
@@ -66,8 +66,8 @@ _chats_iterate_messages(void *cls,
 
 void
 chats_event(UI_CHATS_Handle *chats,
-	    MESSENGER_Application *app,
-	    int key)
+            MESSENGER_Application *app,
+            int key)
 {
   if (chats->open_dialog.window)
   {
@@ -149,9 +149,9 @@ chats_event(UI_CHATS_Handle *chats,
 
 static int
 _chats_print_entry(UI_CHATS_Handle *chats,
-		   char type,
-		   char chat_type,
-		   const char *text)
+                   char type,
+                   char chat_type,
+                   const char *text)
 {
   list_input_print_gnunet(chats, 1);
 
@@ -173,8 +173,8 @@ _chats_print_entry(UI_CHATS_Handle *chats,
 
 enum GNUNET_GenericReturnValue
 _chats_iterate_print_group(void *cls,
-			   UNUSED struct GNUNET_CHAT_Handle *handle,
-			   struct GNUNET_CHAT_Group *group)
+                           UNUSED struct GNUNET_CHAT_Handle *handle,
+                           struct GNUNET_CHAT_Group *group)
 {
   UI_CHATS_Handle *chats = cls;
   const char *name = GNUNET_CHAT_group_get_name(group);
@@ -183,8 +183,8 @@ _chats_iterate_print_group(void *cls,
 
 enum GNUNET_GenericReturnValue
 _chats_iterate_print_contact(void *cls,
-			     UNUSED struct GNUNET_CHAT_Handle *handle,
-			     struct GNUNET_CHAT_Contact *contact)
+                             UNUSED struct GNUNET_CHAT_Handle *handle,
+                             struct GNUNET_CHAT_Contact *contact)
 {
   UI_CHATS_Handle *chats = cls;
 
@@ -197,7 +197,7 @@ _chats_iterate_print_contact(void *cls,
 
 void
 chats_print(UI_CHATS_Handle *chats,
-	    MESSENGER_Application *app)
+            MESSENGER_Application *app)
 {
   if (chats->open_dialog.window)
   {
