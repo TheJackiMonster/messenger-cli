@@ -68,7 +68,7 @@ lobby_create_dialog_event(UI_LOBBY_CREATE_DIALOG_Handle *create_dialog,
     case 27:
     case KEY_EXIT:
       if (create_dialog->lobby)
-	GNUNET_CHAT_lobby_close(create_dialog->lobby);
+        GNUNET_CHAT_lobby_close(create_dialog->lobby);
 
       create_dialog->lobby = NULL;
       create_dialog->win = NULL;
@@ -77,21 +77,18 @@ lobby_create_dialog_event(UI_LOBBY_CREATE_DIALOG_Handle *create_dialog,
     case KEY_ENTER:
       if (create_dialog->uri)
       {
-	GNUNET_free(create_dialog->uri);
+        GNUNET_free(create_dialog->uri);
 
-	create_dialog->lobby = NULL;
-	create_dialog->win = NULL;
+        create_dialog->lobby = NULL;
+        create_dialog->win = NULL;
       }
       else if (!(create_dialog->lobby))
-	create_dialog->lobby = GNUNET_CHAT_lobby_open(
-	    app->chat.handle,
-	    GNUNET_TIME_relative_multiply(
-		GNUNET_TIME_relative_get_second_(),
-		create_dialog->selected
-	    ),
-	    _lobby_open_with_uri,
-	    create_dialog
-	);
+        create_dialog->lobby = GNUNET_CHAT_lobby_open(
+          app->chat.handle,
+          create_dialog->selected,
+          _lobby_open_with_uri,
+          create_dialog
+        );
 
       break;
     default:

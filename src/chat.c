@@ -125,13 +125,13 @@ _chat_idle(void *cls)
   }
 
   app->chat.idle = GNUNET_SCHEDULER_add_delayed_with_priority(
-      GNUNET_TIME_relative_multiply(
-	  GNUNET_TIME_relative_get_millisecond_(),
-	  wgetdelay(app->window)
-      ),
-      GNUNET_SCHEDULER_PRIORITY_IDLE,
-      &_chat_idle,
-      app
+    GNUNET_TIME_relative_multiply(
+      GNUNET_TIME_relative_get_millisecond_(),
+      wgetdelay(app->window)
+    ),
+    GNUNET_SCHEDULER_PRIORITY_IDLE,
+    &_chat_idle,
+    app
   );
 }
 

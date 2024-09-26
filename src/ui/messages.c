@@ -150,8 +150,7 @@ messages_event(UI_MESSAGES_Handle *messages,
     case KEY_BACKSPACE:
       if (messages->selected)
 	      GNUNET_CHAT_message_delete(
-          messages->selected,
-          GNUNET_TIME_relative_get_zero_()
+          messages->selected, 0
 	      );
       break;
     default:
@@ -407,16 +406,12 @@ messages_add(UI_MESSAGES_Handle *messages,
 
   list_input_select(messages, 1, NULL);
 
-  const struct GNUNET_TIME_Absolute abs_time = (
+  const time_t timestamp = (
     GNUNET_CHAT_message_get_timestamp(message)
   );
 
-  const struct GNUNET_TIME_Timestamp timestamp = (
-    GNUNET_TIME_absolute_to_timestamp(abs_time)
-  );
-
   element = GNUNET_new(UI_MESSAGES_List);
-  element->timestamp = GNUNET_TIME_timestamp_to_s(timestamp);
+  element->timestamp = timestamp;
   element->message = message;
 
   GNUNET_CONTAINER_DLL_insert_sorted(
