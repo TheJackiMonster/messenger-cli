@@ -26,7 +26,7 @@ The following dependencies are required and need to be installed to build the ap
 
 Then you can simply use [Meson](https://mesonbuild.com/) as follows:
 ```
-meson build            # Configure the build files for your system
+meson setup build      # Configure the build files for your system
 ninja -C build         # Build the application using those build files
 ninja -C build install # Install the application
 ```
@@ -35,8 +35,9 @@ Here is a list of some useful build commands using Meson and [Ninja](https://nin
 
  - `meson compile -C build` to just compile everything with configured parameters
  - `rm -r build` to cleanup build files in case you want to recompile
- - `meson install -C build` to install the compiled files (you might need sudo permissions to install)
+ - `meson install -C build` to install the compiled files (you might need sudo privileges)
  - `meson dist -C build` to create a tar file for distribution
+ - `ninja -C build uninstall` to uninstall a previous installation (you might need sudo privileges)
 
 If you want to change the installation location, use the `--prefix=` parameter in the initial meson command. Also you can enable optimized release builds by adding `--buildtype=release` as parameter.
 
