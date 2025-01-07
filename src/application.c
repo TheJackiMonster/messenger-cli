@@ -52,9 +52,12 @@ application_init(MESSENGER_Application *app,
                  int argc,
                  char **argv)
 {
+  const struct GNUNET_OS_ProjectData *data =
+    GNUNET_OS_project_data_gnunet();
+
   const struct GNUNET_GETOPT_CommandLineOption options [] = {
     GNUNET_GETOPT_option_version(MESSENGER_CLI_VERSION),
-    GNUNET_GETOPT_option_help(MESSENGER_CLI_DESC),
+    GNUNET_GETOPT_option_help(data, MESSENGER_CLI_DESC),
     GNUNET_GETOPT_OPTION_END
   };
 
@@ -124,11 +127,15 @@ run (void *cls,
 void
 application_run(MESSENGER_Application *app)
 {
+  const struct GNUNET_OS_ProjectData *data =
+    GNUNET_OS_project_data_gnunet();
+
   const struct GNUNET_GETOPT_CommandLineOption options [] = {
     GNUNET_GETOPT_OPTION_END
   };
 
   app->status = GNUNET_PROGRAM_run(
+    data,
     1,
     app->argv,
     MESSENGER_CLI_BINARY,
