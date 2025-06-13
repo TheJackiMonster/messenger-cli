@@ -43,12 +43,24 @@ chat_open_dialog_event(UI_CHAT_OPEN_DIALOG_Handle *open_dialog,
       break;
     case '\n':
     case KEY_ENTER:
+    {
       if (open_dialog->topic_len > 0)
-	GNUNET_CHAT_group_create(app->chat.handle, open_dialog->topic);
+      {
+        struct GNUNET_CHAT_Group *group;
+        char *group_name = malloc(open_dialog->topic_len + 2);
+
+        group = GNUNET_CHAT_group_create(app->chat.handle, open_dialog->topic);
+        group_name[0] = '#';
+        memcpy(group_name + 1, open_dialog->topic, open_dialog->topic_len + 1);
+
+        GNUNET_CHAT_group_set_name(group, group_name);
+        free(group_name);
+      }
 
       open_dialog->topic_len = 0;
       open_dialog->window = NULL;
       break;
+    }
     default:
       break;
   }

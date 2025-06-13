@@ -46,10 +46,6 @@ _chats_iterate_contact(void *cls,
                        struct GNUNET_CHAT_Contact *contact)
 {
   UI_CHATS_Handle *chats = cls;
-
-  if (GNUNET_YES == GNUNET_CHAT_contact_is_owned(contact))
-    return GNUNET_YES;
-
   list_input_select(chats, 1, GNUNET_CHAT_contact_get_context(contact));
   return GNUNET_YES;
 }
@@ -187,10 +183,6 @@ _chats_iterate_print_contact(void *cls,
                              struct GNUNET_CHAT_Contact *contact)
 {
   UI_CHATS_Handle *chats = cls;
-
-  if (GNUNET_YES == GNUNET_CHAT_contact_is_owned(contact))
-    return GNUNET_YES;
-
   const char *name = GNUNET_CHAT_contact_get_name(contact);
   return _chats_print_entry(chats, 'x', 'C', name);
 }
