@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022 GNUnet e.V.
+   Copyright (C) 2022--2025 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -87,10 +87,14 @@ _members_iterate_print(UI_MEMBERS_Handle *members,
 
   size_t key_len = key? strlen(key) : 0;
 
+  util_enable_unique_color(members->window, contact);
+
   if (key_len > 4)
     wprintw(members->window, "[%s]: %s", key + (key_len - 4), name);
   else
     wprintw(members->window, "%s", name);
+
+  util_disable_unique_color(members->window, contact);
 
   if (selected) wattroff(members->window, attrs_select);
 }

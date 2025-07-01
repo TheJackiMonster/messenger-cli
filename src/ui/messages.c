@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022--2024 GNUnet e.V.
+   Copyright (C) 2022--2025 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -223,6 +223,8 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
 
   wprintw(messages->window, " %s | ", time_buf);
 
+  util_enable_unique_color(messages->window, sender);
+
   switch (kind) {
     case GNUNET_CHAT_KIND_JOIN:
       wprintw(
@@ -284,6 +286,8 @@ _messages_iterate_print(UI_MESSAGES_Handle *messages,
       );
       break;
   }
+
+  util_disable_unique_color(messages->window, sender);
 
   if (selected) wattroff(messages->window, attrs_select);
 }

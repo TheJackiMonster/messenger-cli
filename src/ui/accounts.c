@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022--2024 GNUnet e.V.
+   Copyright (C) 2022--2025 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -82,16 +82,23 @@ accounts_event(UI_ACCOUNTS_Handle *accounts,
 static int
 _accounts_print_entry(UI_ACCOUNTS_Handle *accounts,
                       char type,
-                      const char *text)
+                      const char *text,
+                      const void *data)
 {
   list_input_print_gnunet(accounts, 1);
 
   const int attrs_select = A_BOLD;
 
   if (selected) wattron(accounts->window, attrs_select);
+  else type = ' ';
 
   wmove(accounts->window, y, 0);
-  wprintw(accounts->window, "[%c] %s", selected? type : ' ', text);
+
+  util_enable_unique_color(accounts->window, data);
+
+  wprintw(accounts->window, "[%c] %s", type, text);
+
+  util_disable_unique_color(accounts->window, data);
 
   if (selected) wattroff(accounts->window, attrs_select);
 
@@ -105,7 +112,7 @@ _accounts_iterate_print(void *cls,
 {
   UI_ACCOUNTS_Handle *accounts = cls;
   const char *name = GNUNET_CHAT_account_get_name(account);
-  return _accounts_print_entry(accounts, 'x', name);
+  return _accounts_print_entry(accounts, 'x', name, account);
 }
 
 void
@@ -130,5 +137,5 @@ accounts_print(UI_ACCOUNTS_Handle *accounts,
       accounts
   );
 
-  _accounts_print_entry(accounts, '+', "Add account");
+  _accounts_print_entry(accounts, '+', "Add account", NULL);
 }

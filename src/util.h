@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022--2024 GNUnet e.V.
+   Copyright (C) 2022--2025 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -34,6 +34,8 @@
 #define UTIL_LOGO_ROWS 10
 #define UTIL_LOGO_COLS 28
 
+#define UTIL_UNIQUE_COLORS 6
+
 /**
  * Prints the main logo of the application
  * onto a specified view.
@@ -53,5 +55,36 @@ util_print_logo(WINDOW *window);
 void
 util_print_info(WINDOW *window,
                 const char *info);
+
+/**
+ * Initializes the unique color attributes
+ * for using inside window views.
+ */
+void
+util_init_unique_colors(void);
+
+/**
+ * Enables a color attribute representing
+ * a unique color for some specific data
+ * pointer.
+ *
+ * @param[in,out] window Window view
+ * @param[in] data Data pointer
+ */
+void
+util_enable_unique_color(WINDOW *window,
+                         const void *data);
+
+/**
+ * Disables a color attribute representing
+ * a unique color for some specific data
+ * pointer.
+ *
+ * @param[in,out] window Window view
+ * @param[in] data Data pointer
+ */
+void
+util_disable_unique_color(WINDOW *window,
+                          const void *data);
 
 #endif /* UTIL_H_ */

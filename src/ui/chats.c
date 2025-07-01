@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022--2024 GNUnet e.V.
+   Copyright (C) 2022--2025 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -147,20 +147,26 @@ static int
 _chats_print_entry(UI_CHATS_Handle *chats,
                    char type,
                    char chat_type,
-                   const char *text)
+                   const char *text,
+                   const void *data)
 {
   list_input_print_gnunet(chats, 1);
 
   const int attrs_select = A_BOLD;
 
   if (selected) wattron(chats->window, attrs_select);
+  else type = ' ';
 
   wmove(chats->window, y, 0);
+
+  util_enable_unique_color(chats->window, data);
 
   if (chat_type)
     wprintw(chats->window, "[%c][%c] %s", type, chat_type, text);
   else
     wprintw(chats->window, "[%c] %s", type, text);
+
+  util_disable_unique_color(chats->window, data);
 
   if (selected) wattroff(chats->window, attrs_select);
 
@@ -174,7 +180,7 @@ _chats_iterate_print_group(void *cls,
 {
   UI_CHATS_Handle *chats = cls;
   const char *name = GNUNET_CHAT_group_get_name(group);
-  return _chats_print_entry(chats, 'x', 'G', name);
+  return _chats_print_entry(chats, 'x', 'G', name, group);
 }
 
 enum GNUNET_GenericReturnValue
@@ -184,7 +190,7 @@ _chats_iterate_print_contact(void *cls,
 {
   UI_CHATS_Handle *chats = cls;
   const char *name = GNUNET_CHAT_contact_get_name(contact);
-  return _chats_print_entry(chats, 'x', 'C', name);
+  return _chats_print_entry(chats, 'x', 'C', name, contact);
 }
 
 void
@@ -225,7 +231,7 @@ chats_print(UI_CHATS_Handle *chats,
       chats
   );
 
-  _chats_print_entry(chats, '+', '\0', "Add chat");
-  _chats_print_entry(chats, '+', '\0', "Open lobby");
-  _chats_print_entry(chats, '+', '\0', "Enter lobby");
+  _chats_print_entry(chats, '+', '\0', "Add chat", NULL);
+  _chats_print_entry(chats, '+', '\0', "Open lobby", NULL);
+  _chats_print_entry(chats, '+', '\0', "Enter lobby", NULL);
 }
