@@ -1,0 +1,76 @@
+name: messenger-cli
+version: 0.3.1
+title: GNUnet Messenger
+summary: An interface using ncurses for the Messenger service of GNUnet.
+description: |
+  A CLI for the Messenger service of GNUnet.
+adopt-info: messenger-cli
+base: core24
+confinement: strict
+grade: stable
+
+platforms:
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
+  arm64:
+    build-on: [arm64]
+    build-for: [arm64]
+
+apps:
+  messenger-cli:
+    command: usr/bin/messenger-cli
+    plugs:
+      - home
+      - network
+      - network-bind
+
+parts:
+  gnunet:
+    build-packages:
+      - libgcrypt20-dev
+      - recutils
+      - libjansson-dev
+      - libsodium-dev
+      - libcurl4-gnutls-dev
+      - libidn2-dev
+      - libunistring-dev
+      - libsqlite3-dev
+      - libmicrohttpd-dev
+      - libltdl-dev
+    stage-packages:
+      - libgcrypt20
+      - recutils
+      - libjansson4
+      - libsodium23
+      - libcurl3t64-gnutls
+      - libidn2-0
+      - libunistring5
+      - libsqlite3-0
+      - libmicrohttpd12
+      - libgnutls-dane0
+      - libunbound8
+      - libltdl7
+    source: http://ftp.gnu.org/gnu/gnunet/gnunet-0.24.0.tar.gz
+    plugin: meson
+    meson-parameters:
+      - --prefix=/usr
+      - --buildtype=release
+  libgnunetchat:
+    after: [ gnunet ]
+    source: http://ftp.gnu.org/gnu/gnunet/libgnunetchat-0.5.3.tar.gz
+    plugin: meson
+    meson-parameters:
+      - --prefix=/usr
+      - --buildtype=release
+  messenger-cli:
+    after: [ gnunet, libgnunetchat ]
+    build-packages:
+      - libncurses-dev
+    stage-packages:
+      - libncurses6
+    source: http://ftp.gnu.org/gnu/gnunet/messenger-cli-0.3.1.tar.gz
+    plugin: meson
+    meson-parameters:
+      - --prefix=/usr
+      - --buildtype=release
