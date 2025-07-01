@@ -59,6 +59,26 @@ util_print_info(WINDOW *window,
 }
 
 void
+util_print_prompt(WINDOW *window,
+                  const char *prompt)
+{
+  const int x = getcurx(window);
+  const int y = getcury(window);
+  int remaining = getmaxx(window) - x;
+
+  if (strlen(prompt) < remaining)
+    wprintw(window, "%s", prompt);
+  else
+  {
+    for (int i = 0; i < remaining; i++)
+    {
+      wmove(window, y, x + i);
+      wprintw(window, "%c", prompt[i]);
+    }
+  }
+}
+
+void
 util_init_unique_colors()
 {
   start_color();

@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022 GNUnet e.V.
+   Copyright (C) 2022--2025 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -30,7 +30,7 @@
 
 void
 _lobby_open_with_uri(void *cls,
-		     const struct GNUNET_CHAT_Uri *uri)
+                     const struct GNUNET_CHAT_Uri *uri)
 {
   UI_LOBBY_CREATE_DIALOG_Handle *create_dialog = cls;
 
@@ -42,8 +42,8 @@ _lobby_open_with_uri(void *cls,
 
 void
 lobby_create_dialog_event(UI_LOBBY_CREATE_DIALOG_Handle *create_dialog,
-		          UNUSED struct MESSENGER_Application *app,
-		          int key)
+                          UNUSED struct MESSENGER_Application *app,
+                          int key)
 {
   create_dialog->window = *(create_dialog->win);
 
@@ -103,7 +103,7 @@ lobby_create_dialog_event(UI_LOBBY_CREATE_DIALOG_Handle *create_dialog,
 
 static void
 _lobby_iterate_print(UI_LOBBY_CREATE_DIALOG_Handle *create_dialog,
-		     const char *label)
+                     const char *label)
 {
   list_input_print(create_dialog, 1);
 
@@ -111,8 +111,8 @@ _lobby_iterate_print(UI_LOBBY_CREATE_DIALOG_Handle *create_dialog,
 
   if (selected) wattron(create_dialog->window, attrs_select);
 
-  wmove(create_dialog->window, y, 0);
-  wprintw(create_dialog->window, "%s", label);
+  wmove(create_dialog->window, 1 + y, 0);
+  wprintw(create_dialog->window, "> %s", label);
 
   if (selected) wattroff(create_dialog->window, attrs_select);
 }
@@ -128,10 +128,18 @@ lobby_create_dialog_print(UI_LOBBY_CREATE_DIALOG_Handle *create_dialog)
   list_input_reset(create_dialog);
   werase(create_dialog->window);
 
+  wmove(create_dialog->window, 0, 0);
+
   if (create_dialog->uri)
-    _lobby_iterate_print(create_dialog, create_dialog->uri);
+  {
+    util_print_prompt(create_dialog->window, "This is the URI of the new lobby:");
+
+	_lobby_iterate_print(create_dialog, create_dialog->uri);
+  }
   else
   {
+    util_print_prompt(create_dialog->window, "Select the duration for the new lobby:");
+
     _lobby_iterate_print(create_dialog, "30 seconds");
     _lobby_iterate_print(create_dialog, "5 minutes");
     _lobby_iterate_print(create_dialog, "1 hour");

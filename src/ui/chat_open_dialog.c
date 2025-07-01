@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022--2023 GNUnet e.V.
+   Copyright (C) 2022--2025 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -29,6 +29,7 @@
 
 #include "text_input.h"
 #include "../application.h"
+#include "../util.h"
 
 void
 chat_open_dialog_event(UI_CHAT_OPEN_DIALOG_Handle *open_dialog,
@@ -79,8 +80,18 @@ chat_open_dialog_print(UI_CHAT_OPEN_DIALOG_Handle *open_dialog)
   werase(window);
   wmove(window, 0, 0);
 
+  util_print_prompt(window, "Enter the topic of the public chat:");
+  wmove(window, 1, 0);
+
+  wprintw(window, "> ");
+  wmove(window, 1, 2);
+
+  wattron(window, A_BOLD);
+
   wprintw(window, "%s", open_dialog->topic);
-  wmove(window, 0, open_dialog->topic_pos);
+  wmove(window, 1, 2 + open_dialog->topic_pos);
+
+  wattroff(window, A_BOLD);
 
   wcursyncup(window);
   curs_set(1);

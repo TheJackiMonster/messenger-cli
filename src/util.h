@@ -57,6 +57,17 @@ util_print_info(WINDOW *window,
                 const char *info);
 
 /**
+ * Print a prompt with properly cut text
+ * into a window view of the application.
+ *
+ * @param[in,out] window Window view
+ * @param[in] prompt Prompt text
+ */
+void
+util_print_prompt(WINDOW *window,
+                  const char *prompt);
+
+/**
  * Initializes the unique color attributes
  * for using inside window views.
  */

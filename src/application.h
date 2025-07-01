@@ -79,8 +79,8 @@ application_clear(MESSENGER_Application *app);
  */
 void
 application_init(MESSENGER_Application *app,
-		 int argc,
-		 char **argv);
+                 int argc,
+                 char **argv);
 
 /**
  * Refreshes the application handle freeing all temporary
