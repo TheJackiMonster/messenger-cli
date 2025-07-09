@@ -2,6 +2,8 @@
 
 A CLI for the Messenger service of GNUnet.
 
+[![messenger-cli](https://snapcraft.io/messenger-cli/badge.svg)](https://snapcraft.io/messenger-cli)
+
 ```
                             
     o                   o   
