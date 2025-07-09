@@ -38,6 +38,7 @@ parts:
       - libsqlite3-dev
       - libmicrohttpd-dev
       - libltdl-dev
+      - zlib1g-dev
       - meson
     stage-packages:
       - libgcrypt20
@@ -52,6 +53,7 @@ parts:
       - libgnutls-dane0
       - libunbound8
       - libltdl7
+      - zlib1g
     source: http://ftp.gnu.org/gnu/gnunet/gnunet-0.24.3.tar.gz
     plugin: meson
     meson-parameters:
