@@ -16,7 +16,7 @@ A CLI for the Messenger service of GNUnet.
 
 ```
 
-## Features
+## Details
 
 The tool messenger-cli is an terminal interface for the GNUnet Messenger service. The goal is to provide private and secure communication between any group of devices.
 
