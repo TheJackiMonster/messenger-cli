@@ -16,6 +16,12 @@ A CLI for the Messenger service of GNUnet.
 
 ```
 
+## Features
+
+The tool messenger-cli is an terminal interface for the GNUnet Messenger service. The goal is to provide private and secure communication between any group of devices.
+
+Chats will generally created as opt-in. So you can decide who may contact you directly and who does not, accepting to a direct chat. Leaving a chat is also always possible.
+
 ## Build & Installation
 
 The following dependencies are required and need to be installed to build the application:
