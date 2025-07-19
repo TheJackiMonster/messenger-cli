@@ -1,0 +1,66 @@
+name: Linux Build
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Install tools
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get -qq install git
+
+      - name: Download framework
+        run: |
+          git clone https://git.gnunet.org/gnunet.git
+      
+      - name: Install dependencies (framework)
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get -qq install meson ninja-build gcc gettext recutils uncrustify yapf3
+          sudo apt-get -qq install python3-sphinx python3-sphinx-multiversion python3-sphinx-rtd-theme
+          sudo apt-get -qq install libgcrypt20-dev libjansson-dev libsodium-dev libcurl4-gnutls-dev libidn2-dev libunistring-dev libsqlite3-dev libmicrohttpd-dev libltdl-dev
+
+      - name: Build framework
+        run: |
+          cd gnunet
+          ./bootstrap
+          meson setup --prefix=/usr --libdir=lib build
+          meson compile -C build
+          sudo meson install -C build
+          cd ..
+
+      - name: Checkout library
+        run: |
+          git clone https://git.gnunet.org/libgnunetchat.git
+      
+      - name: Install dependencies (application)
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get -qq install ninja-build meson gcc
+
+      - name: Build library
+        run: |
+          cd libgnunetchat
+          meson setup --prefix=/usr --libdir=lib build
+          meson compile -C build
+          sudo meson install -C build
+          cd ..
+
+      - name: Checkout the current branch
+        uses: actions/checkout@v3
+
+      - name: Install dependencies (application)
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get -qq install ninja-build meson gcc
+          sudo apt-get -qq install libncurses-dev pkg-config
+
+      - name: Build application
+        run: |
+          meson setup --prefix=/usr --libdir=lib build
+          meson compile -C build
+          sudo meson install -C build
