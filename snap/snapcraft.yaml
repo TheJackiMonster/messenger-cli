@@ -1,5 +1,5 @@
 name: messenger-cli
-version: 0.3.1
+version: 0.4.0
 title: GNUnet Messenger
 summary: An interface using ncurses for the Messenger service of GNUnet.
 description: |
@@ -54,7 +54,7 @@ parts:
       - libunbound8
       - libltdl7
       - zlib1g
-    source: http://ftp.gnu.org/gnu/gnunet/gnunet-0.24.3.tar.gz
+    source: http://ftp.gnu.org/gnu/gnunet/gnunet-0.25.0.tar.gz
     plugin: meson
     meson-parameters:
       - --prefix=/usr
@@ -63,7 +63,7 @@ parts:
     after: [ gnunet ]
     build-packages:
       - pkg-config
-    source: http://ftp.gnu.org/gnu/gnunet/libgnunetchat-0.5.3.tar.gz
+    source: http://ftp.gnu.org/gnu/gnunet/libgnunetchat-0.6.0.tar.gz
     plugin: meson
     meson-parameters:
       - --prefix=/usr
@@ -74,7 +74,7 @@ parts:
       - libncurses-dev
     stage-packages:
       - libncurses6
-    source: http://ftp.gnu.org/gnu/gnunet/messenger-cli-0.3.1.tar.gz
+    source: http://ftp.gnu.org/gnu/gnunet/messenger-cli-0.4.0.tar.gz
     plugin: meson
     meson-parameters:
       - --prefix=/usr
