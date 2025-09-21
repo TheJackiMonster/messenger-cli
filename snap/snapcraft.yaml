@@ -68,7 +68,8 @@ parts:
       - libunbound8
       - libltdl7
       - zlib1g
-    source: https://ftp.gnu.org/gnu/gnunet/gnunet-0.25.0.tar.gz
+    source: https://ftpmirror.gnu.org/gnunet/gnunet-0.25.0.tar.gz
+    source-checksum: sha512/5ff3c4ecb79a96721e7cd23042dc93eca314ab95f7d24b096f63398f1b57f134c8d7b2c646eb4b95cc76c63ac0147c369d3119ca2d12e9a01cd74250dc0c3a37
     plugin: meson
     meson-parameters:
       - --prefix=/usr
@@ -77,7 +78,8 @@ parts:
     after: [ gnunet ]
     build-packages:
       - pkg-config
-    source: https://ftp.gnu.org/gnu/gnunet/libgnunetchat-0.6.0.tar.gz
+    source: https://ftpmirror.gnu.org/gnunet/libgnunetchat-0.6.0.tar.gz
+    source-checksum: sha512/46402752bf6f8a5b9e66fb7863f7b4430bc2679e42df4aeade48d6f60bd6d4d77d2079ea2ef26e72faa399eda9dd2aa485c8897f2e9af55f2258794f47424851
     plugin: meson
     meson-parameters:
       - --prefix=/usr
@@ -88,7 +90,8 @@ parts:
       - libncurses-dev
     stage-packages:
       - libncurses6
-    source: https://ftp.gnu.org/gnu/gnunet/messenger-cli-0.4.0.tar.gz
+    source: https://ftpmirror.gnu.org/gnunet/messenger-cli-0.4.0.tar.gz
+    source-checksum: sha512/a6971c599eb08bd501572c3ca38a628f6bcf18d22de5f77edff19cf4a29d463247231b69afd4907240a14299b384b99af35c90bf0cfbc02cc7ae2113753fd393
     plugin: meson
     meson-parameters:
       - --prefix=/usr
