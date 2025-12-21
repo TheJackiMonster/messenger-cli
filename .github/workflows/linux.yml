@@ -15,7 +15,7 @@ jobs:
 
       - name: Download framework
         run: |
-          git clone https://git.gnunet.org/gnunet.git
+          git clone https://github.com/TheJackiMonster/gnunet.git
       
       - name: Install dependencies (framework)
         run: |
@@ -35,7 +35,7 @@ jobs:
 
       - name: Checkout library
         run: |
-          git clone https://git.gnunet.org/libgnunetchat.git
+          git clone https://github.com/TheJackiMonster/libgnunetchat.git
       
       - name: Install dependencies (application)
         run: |
