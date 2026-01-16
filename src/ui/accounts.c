@@ -24,8 +24,12 @@
 
 #include "accounts.h"
 
+#include <curses.h>
+#include <gnunet/gnunet_chat_lib.h>
+
 #include "list_input.h"
 #include "../application.h"
+#include "../secret.h"
 #include "../util.h"
 
 int
@@ -68,9 +72,60 @@ accounts_event(UI_ACCOUNTS_Handle *accounts,
     case '\n':
     case KEY_ENTER:
       if (accounts->selected)
-	GNUNET_CHAT_connect(app->chat.handle, accounts->selected);
+      {
+        char new_secret [65];
+        uint32_t secret_len;
+        const char *secret;
+        char *secret_ptr;
+
+        const char *name = GNUNET_CHAT_account_get_name(
+          accounts->selected
+        );
+
+        secret_ptr = secret_lookup(name, &secret_len);
+        secret = secret_ptr;
+        
+        if (!secret)
+        {
+          secret_len = 64;
+          if (GNUNET_OK == GNUNET_CHAT_generate_secret(new_secret, secret_len))
+          {
+            new_secret[secret_len] = '\0';
+            
+            if (secret_store(name, new_secret, secret_len))
+              secret = new_secret;
+          }
+        }
+
+        if (!secret)
+          secret_len = 0;
+
+        GNUNET_CHAT_connect(
+          app->chat.handle,
+          accounts->selected,
+          secret,
+          secret_len
+        );
+
+        if (secret_ptr)
+          secret_free(secret_ptr);
+        else
+          secret_wipe(new_secret);
+      }
       else
-	accounts->create_dialog.window = &(accounts->window);
+        accounts->create_dialog.window = &(accounts->window);
+      break;
+    case 8:
+    case KEY_BACKSPACE:
+      if (accounts->selected)
+      {
+        const char *name = GNUNET_CHAT_account_get_name(
+          accounts->selected
+        );
+
+        if (GNUNET_OK == GNUNET_CHAT_account_delete(app->chat.handle, name))
+          secret_delete(name);
+      }
       break;
     default:
       break;

@@ -1,6 +1,6 @@
 #
 # This file is part of GNUnet.
-# Copyright (C) 2023 GNUnet e.V.
+# Copyright (C) 2023--2026 GNUnet e.V.
 #
 # GNUnet is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -23,6 +23,7 @@ subdir('ui')
 messenger_cli_sources = files([
     'application.c', 'application.h',
     'chat.c', 'chat.h',
+    'secret.c', 'secret.h',
     'util.c', 'util.h',
     'messenger_cli.c',
 ]) + messenger_cli_ui_sources
