@@ -33,6 +33,7 @@ The following dependencies are required and need to be installed to build the ap
  - [gnunet](https://git.gnunet.org/gnunet.git/): For using general GNUnet datatypes
  - [libgnunetchat](https://git.gnunet.org/libgnunetchat.git/): For chatting via GNUnet messenger
  - [ncurses](https://www.gnu.org/software/ncurses/): For the general UI visualization
+ - [libsecret](https://gitlab.gnome.org/GNOME/libsecret): For storing and receiving secrets to encrypt/decrypt local keys
 
 Then you can simply use [Meson](https://mesonbuild.com/) as follows:
 ```
