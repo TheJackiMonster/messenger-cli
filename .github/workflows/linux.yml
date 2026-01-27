@@ -57,7 +57,7 @@ jobs:
         run: |
           sudo apt-get -qq update
           sudo apt-get -qq install ninja-build meson gcc
-          sudo apt-get -qq install libncurses-dev pkg-config
+          sudo apt-get -qq install libncurses-dev libsecret-1-dev pkg-config
 
       - name: Build application
         run: |
