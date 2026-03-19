@@ -1,5 +1,5 @@
 name: messenger-cli
-version: 0.4.0
+version: 0.5.0
 title: GNUnet Messenger
 summary: An interface using ncurses for the Messenger service of GNUnet.
 description: |
@@ -68,8 +68,8 @@ parts:
       - libunbound8
       - libltdl7
       - zlib1g
-    source: https://ftpmirror.gnu.org/gnunet/gnunet-0.26.1.tar.gz
-    source-checksum: sha512/f2d1873979c94e6ff3a220760429813666c4097d02402be6c7c77aff508eb009eacd23f7e5269a6c8f19fae033370286553328a88a75b28315250ae5bc00304d
+    source: https://ftpmirror.gnu.org/gnunet/gnunet-0.27.0.tar.gz
+    source-checksum: sha512/e5e17911f48ad2579898a7f119a1faede0ce1a437163f826d3cd02fefe0de6ce254cb514b5b2455270f6f5c474e39aea837a1a062d2ca09a4c002d4f574ac360
     plugin: meson
     meson-parameters:
       - --prefix=/usr
@@ -78,8 +78,8 @@ parts:
     after: [ gnunet ]
     build-packages:
       - pkg-config
-    source: https://ftpmirror.gnu.org/gnunet/libgnunetchat-0.6.1.tar.gz
-    source-checksum: sha512/fe18b18cbac15b357a108d3bf1ef7927ae489060db18cb8cb72f3b1fb4209d52b45864d6819b5791c06243492278b3d98afe89f295966097eac917d12d56928e
+    source: https://ftpmirror.gnu.org/gnunet/libgnunetchat-0.7.0.tar.gz
+    source-checksum: sha512/330857bc3e38c2107d70c5ce5d729a1562593b139bc86bf883a5b397f2b33f9ea362e2b6619b35566cb2a646cfc0c5ca71478ff7161cf40410fe52666b828bba
     plugin: meson
     meson-parameters:
       - --prefix=/usr
@@ -88,10 +88,12 @@ parts:
     after: [ gnunet, libgnunetchat ]
     build-packages:
       - libncurses-dev
+      - libsecret-1-dev
     stage-packages:
       - libncurses6
-    source: https://ftpmirror.gnu.org/gnunet/messenger-cli-0.4.0.tar.gz
-    source-checksum: sha512/a6971c599eb08bd501572c3ca38a628f6bcf18d22de5f77edff19cf4a29d463247231b69afd4907240a14299b384b99af35c90bf0cfbc02cc7ae2113753fd393
+      - libsecret-1-0
+    source: https://ftpmirror.gnu.org/gnunet/messenger-cli-0.5.0.tar.gz
+    source-checksum: sha512/33f2255c3bbeab104b8a680687a647238f2f42e99a73b922f6936127dda74ffec3699dae687dabe3c6aa22527d71a5cc83dbbd1217e43c242335a240cddb0cb2
     plugin: meson
     meson-parameters:
       - --prefix=/usr
