@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022 GNUnet e.V.
+   Copyright (C) 2022, 2026 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -26,7 +26,6 @@
 #define UI_LIST_INPUT_H_
 
 #include <stdbool.h>
-#include <stdlib.h>
 
 /**
  * Resets the list controls.

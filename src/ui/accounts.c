@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022--2025 GNUnet e.V.
+   Copyright (C) 2022--2026 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -28,6 +28,7 @@
 #include <gnunet/gnunet_chat_lib.h>
 
 #include "list_input.h"
+
 #include "../application.h"
 #include "../secret.h"
 #include "../util.h"
@@ -84,14 +85,14 @@ accounts_event(UI_ACCOUNTS_Handle *accounts,
 
         secret_ptr = secret_lookup(name, &secret_len);
         secret = secret_ptr;
-        
+
         if (!secret)
         {
           secret_len = 64;
           if (GNUNET_OK == GNUNET_CHAT_generate_secret(new_secret, secret_len))
           {
             new_secret[secret_len] = '\0';
-            
+
             if (secret_store(name, new_secret, secret_len))
               secret = new_secret;
           }

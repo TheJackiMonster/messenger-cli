@@ -21,6 +21,7 @@ Makefile
 .settings/
 .cache/
 .vscode/
+.zed/
 
 # Binary files:
 *.o

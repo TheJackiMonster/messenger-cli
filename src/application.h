@@ -1,6 +1,6 @@
 /*
    This file is part of GNUnet.
-   Copyright (C) 2022--2025 GNUnet e.V.
+   Copyright (C) 2022--2026 GNUnet e.V.
 
    GNUnet is free software: you can redistribute it and/or modify it
    under the terms of the GNU Affero General Public License as published
@@ -25,7 +25,6 @@
 #ifndef APPLICATION_H_
 #define APPLICATION_H_
 
-#include <stdlib.h>
 #include <curses.h>
 
 #include "chat.h"
