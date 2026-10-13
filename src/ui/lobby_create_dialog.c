@@ -85,6 +85,7 @@ lobby_create_dialog_event(UI_LOBBY_CREATE_DIALOG_Handle *create_dialog,
       else if (!(create_dialog->lobby))
         create_dialog->lobby = GNUNET_CHAT_lobby_open(
           app->chat.handle,
+          GNUNET_CHAT_LOBBY_TYPE_UNKNOWN,
           create_dialog->selected,
           _lobby_open_with_uri,
           create_dialog
